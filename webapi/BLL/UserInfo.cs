@@ -165,9 +165,9 @@ namespace lks.webapi.BLL
         /// <param name="orderField">排序字段</param>
         /// <param name="isDesc">是否降序</param>
         /// <returns>数据列表</returns>
-        public IEnumerable<UserInfo> QueryList(int index, int size, object wheres, string orderField, bool isDesc = true)
+        public IEnumerable<UserInfo> QueryList(int index, int size, object wheres, string orderField, out int total, bool isDesc = true)
         {
-            return dal.QueryList(index, size, wheres, orderField, isDesc);
+            return dal.QueryList(index, size, wheres, orderField, out total, isDesc);
         }
         /// <summary>
         /// 查询单条数据

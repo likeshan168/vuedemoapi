@@ -1080,6 +1080,26 @@ namespace lks.webapi.Utility
                 }
             }
         }
+        public static IEnumerable<T> GetList<T>(string sql, SqlParameter[] parameters, out int total) where T : class, new()
+        {
+            IList<T> list = new List<T>();
+            total = 0;
+            using (IDataReader reader = ExecuteReader(sql, parameters))
+            {
+                while (reader.Read())
+                {
+                    list.Add(MapEntity<T>(reader));
+                }
+                if (reader.NextResult())
+                {
+                    if (reader.Read())
+                    {
+                        total = reader.GetInt32(0);
+                    }
+                }
+                return list;
+            }
+        }
 
         public static T QuerySingle<T>(string sql, SqlParameter[] parameters) where T : class, new()
         {
@@ -1121,20 +1141,20 @@ namespace lks.webapi.Utility
                 throw new ArgumentNullException("orderField");
             }
             string column = columns != null && columns.Any() ? string.Join(",", columns) : "*";
-            return $"select {column} from (select row_number() over(order by [{orderField}] {(isDesc ? "desc" : string.Empty)}) as num, {column} from [{table}] {GetWhere(where)}) as tb1 where tb1.num between {(index - 1) * size} and {index * size}";
+            return $"select {column} from (select row_number() over(order by [{orderField}] {(isDesc ? "desc" : string.Empty)}) as num, {column} from [{table}] {GetWhere(where)}) as tb1 where tb1.num between {(index - 1) * size + 1} and {index * size};select count({column}) from [{table}] {GetWhere(where)};";
         }
 
         private static string GenerateQuerySql(string table, string[] columns, object where, string orderField, bool isDesc)
         {
             //where = string.IsNullOrWhiteSpace(where) ? string.Empty : $"where {where}";
             string column = columns != null && columns.Any() ? string.Join(",", columns) : "*";
-            return $"select {column} from {table} {GetWhere(where)} {(string.IsNullOrWhiteSpace(orderField) ? string.Empty : $"order by {orderField}")} {(isDesc && !string.IsNullOrWhiteSpace(orderField) ? "desc" : string.Empty)}";
+            return $"select {column} from {table} {GetWhere(where)} {(string.IsNullOrWhiteSpace(orderField) ? string.Empty : $"order by {orderField}")} {(isDesc && !string.IsNullOrWhiteSpace(orderField) ? "desc" : string.Empty)};select count({column}) from [{table}] {GetWhere(where)};";
         }
 
         private static string GenerateQuerySql(string table, string[] columns, int size, object where, string orderField, bool isDesc)
         {
             string column = columns != null && columns.Any() ? string.Join(",", columns) : "*";
-            return $"select top {size} {column} from {table} {GetWhere(where)} {(string.IsNullOrWhiteSpace(orderField) ? string.Empty : $"order by {orderField}")} {(isDesc && !string.IsNullOrWhiteSpace(orderField) ? "desc" : string.Empty)}";
+            return $"select top {size} {column} from {table} {GetWhere(where)} {(string.IsNullOrWhiteSpace(orderField) ? string.Empty : $"order by {orderField}")} {(isDesc && !string.IsNullOrWhiteSpace(orderField) ? "desc" : string.Empty)};select count({column}) from [{table}] {GetWhere(where)};";
         }
 
         public static string GetWhere(object where)

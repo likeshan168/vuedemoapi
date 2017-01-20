@@ -229,10 +229,10 @@ namespace lks.webapi.DAL
         /// <param name="orderField">排序字段</param>
         /// <param name="isDesc">是否降序</param>
         /// <returns>数据列表</returns>
-        public IEnumerable<UserInfo> QueryList(int index, int size, object wheres, string orderField, bool isDesc = true)
+        public IEnumerable<UserInfo> QueryList(int index, int size, object wheres, string orderField, out int total, bool isDesc = true)
         {
             string sql = SqlHelper.GenerateQuerySql("UserInfo", null, index, size, wheres, orderField, isDesc);
-            return SqlHelper.GetList<UserInfo>(sql, null);
+            return SqlHelper.GetList<UserInfo>(sql, null, out total);
         }
         /// <summary>
         /// 根据条件获取单条数据

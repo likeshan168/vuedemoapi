@@ -37,7 +37,12 @@ namespace webapi.Controllers
         [Route("getList"), HttpPost]
         public dynamic GetUserList(PagePara para)
         {
-            return _bllService.QueryList(para.Index, para.Size, para.WhereStr, para.OrderField);
+            int total = 0;
+            return new
+            {
+                Users = _bllService.QueryList(para.Index, para.Size, para.WhereStr, para.OrderField, out total),
+                Total = total
+            };
         }
     }
 }
