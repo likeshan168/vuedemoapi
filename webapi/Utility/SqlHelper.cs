@@ -1157,19 +1157,29 @@ namespace lks.webapi.Utility
             return $"select top {size} {column} from {table} {GetWhere(where)} {(string.IsNullOrWhiteSpace(orderField) ? string.Empty : $"order by {orderField}")} {(isDesc && !string.IsNullOrWhiteSpace(orderField) ? "desc" : string.Empty)};select count({column}) from [{table}] {GetWhere(where)};";
         }
 
+        //public static string GetWhere(object where)
+        //{
+        //    if (where == null)
+        //        return string.Empty;
+
+        //    string ws = string.Empty;
+        //    ws = "where ";
+        //    Type w = where.GetType();
+        //    foreach (var item in w.GetProperties())
+        //    {
+        //        ws += $"{item.Name}={item.GetValue(where)} and ";
+        //    }
+        //    return ws.Substring(0, ws.Length - 5);
+        //}
+
         public static string GetWhere(object where)
         {
-            if (where == null)
+            if (where == null||string.IsNullOrWhiteSpace(where.ToString()))
                 return string.Empty;
 
             string ws = string.Empty;
-            ws = "where ";
-            Type w = where.GetType();
-            foreach (var item in w.GetProperties())
-            {
-                ws += $"{item.Name}={item.GetValue(where)} and ";
-            }
-            return ws.Substring(0, ws.Length - 5);
+            ws = $"where {where}";
+            return ws;
         }
     }
 }
