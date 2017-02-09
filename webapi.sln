@@ -5,6 +5,10 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webapi", "webapi\webapi.csproj", "{0CA3A4D3-EA3E-4209-8DFE-CF51C13A473E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "owinapp", "owinapp\owinapp.csproj", "{915C47AE-490D-48F4-B2E0-958D48D008A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "owinhost", "owinhost\owinhost.csproj", "{EAFE90DB-D88C-4DD8-9FB5-E42392FDB77C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{0CA3A4D3-EA3E-4209-8DFE-CF51C13A473E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CA3A4D3-EA3E-4209-8DFE-CF51C13A473E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CA3A4D3-EA3E-4209-8DFE-CF51C13A473E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{915C47AE-490D-48F4-B2E0-958D48D008A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{915C47AE-490D-48F4-B2E0-958D48D008A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{915C47AE-490D-48F4-B2E0-958D48D008A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{915C47AE-490D-48F4-B2E0-958D48D008A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAFE90DB-D88C-4DD8-9FB5-E42392FDB77C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAFE90DB-D88C-4DD8-9FB5-E42392FDB77C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAFE90DB-D88C-4DD8-9FB5-E42392FDB77C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAFE90DB-D88C-4DD8-9FB5-E42392FDB77C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

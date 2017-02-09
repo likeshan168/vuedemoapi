@@ -13,6 +13,7 @@ namespace webapi.Controllers
     public class AccountController : ApiController
     {
         private readonly UserInfoService _bllService = new UserInfoService();
+        //IOwinContext
 
         [Route("register"), HttpPost]
         public dynamic Register(UserInfo userInfo)

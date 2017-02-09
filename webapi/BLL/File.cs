@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Web;
 using lks.webapi.DAL;
 using lks.webapi.Model;
 using lks.webapi.Utility;
-
 namespace lks.webapi.BLL
 {
-    //UserInfo
-    public partial class UserInfoService
+    //File
+    public partial class FileService
     {
 
-        private readonly UserInfoDAO dal = new UserInfoDAO();
-        public UserInfoService()
+        private readonly FileDAO dal = new FileDAO();
+        public FileService()
         { }
 
         #region  Method
@@ -25,75 +23,35 @@ namespace lks.webapi.BLL
             return dal.Exists(Id);
         }
 
-        public dynamic Exists(string userName, string password)
-        {
-            try
-            {
-                if (dal.Exists(userName, password))
-                {
-                    //HttpContext.Current.Session["CurrentUser"] = userName;
-                    
-                    return new ResponseResult()
-                    {
-                        Code = 200,
-                        Msg = "请求成功",
-                        User = new UserInfo() { Name = userName, Password = password },
-                        AccessToken = Guid.NewGuid().ToString()
-                    };
-                }
-                else
-                {
-                    HttpContext.Current.Session["CurrentUser"] = null;
-                    return new ResponseResult()
-                    {
-                        Code = 401,
-                        Msg = "不存在",
-                        User = new UserInfo() { Name = userName, Password = password }
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                HttpContext.Current.Session["CurrentUser"] = null;
-                return new ResponseResult()
-                {
-                    Code = 500,
-                    Msg = ex.Message,
-                    User = new UserInfo() { Name = userName, Password = password }
-                };
-            }
-        }
-
         /// <summary>
         /// 增加一条数据
         /// </summary>
-        public dynamic Add(UserInfo model)
+        public dynamic Add(File model)
         {
             try
             {
                 dal.Add(model);
-                return new ResponseResult()
+                return new FileResponse()
                 {
-                    Code = 200,
-                    Msg = "请求成功",
-                    User = model
+                    Msg = "上传成功",
+                    Code = 200
                 };
             }
             catch (Exception ex)
             {
-                return new ResponseResult()
+                return new FileResponse()
                 {
-                    Code = 500,
                     Msg = ex.Message,
-                    User = model
+                    Code = 500
                 };
             }
+
         }
 
         /// <summary>
         /// 更新一条数据
         /// </summary>
-        public bool Update(UserInfo model)
+        public bool Update(File model)
         {
             return dal.Update(model);
         }
@@ -110,7 +68,7 @@ namespace lks.webapi.BLL
         /// <summary>
         /// 得到一个对象实体
         /// </summary>
-        public UserInfo GetModel(Guid Id)
+        public File GetModel(Guid Id)
         {
 
             return dal.GetModel(Id);
@@ -119,10 +77,10 @@ namespace lks.webapi.BLL
         /// <summary>
         /// 得到一个对象实体，从缓存中
         /// </summary>
-        public UserInfo GetModelByCache(Guid Id)
+        public File GetModelByCache(Guid Id)
         {
 
-            string CacheKey = "UserInfoModel-" + Id;
+            string CacheKey = "FileModel-" + Id;
             object objModel = DataCache.GetCache(CacheKey);
             if (objModel == null)
             {
@@ -137,7 +95,7 @@ namespace lks.webapi.BLL
                 }
                 catch { }
             }
-            return (UserInfo)objModel;
+            return (File)objModel;
         }
 
         /// <summary>
@@ -157,7 +115,7 @@ namespace lks.webapi.BLL
         /// <summary>
         /// 获得数据列表
         /// </summary>
-        public List<UserInfo> QueryList(string strWhere)
+        public List<File> QueryList(string strWhere)
         {
             DataSet ds = dal.GetList(strWhere);
             return DataTableToList(ds.Tables[0]);
@@ -171,16 +129,16 @@ namespace lks.webapi.BLL
         /// <param name="orderField">排序字段</param>
         /// <param name="isDesc">是否降序</param>
         /// <returns>数据列表</returns>
-        public IEnumerable<UserInfo> QueryList(int index, int size, object wheres, string orderField, out int total, bool isDesc = true)
+        public IEnumerable<File> QueryList(int index, int size, object wheres, string orderField, bool isDesc = true)
         {
-            return dal.QueryList(index, size, wheres, orderField, out total, isDesc);
+            return dal.QueryList(index, size, wheres, orderField, isDesc);
         }
         /// <summary>
         /// 查询单条数据
         /// </summary>
         /// <param name="wheres">查询条件</param>
         /// <returns>单条数据项</returns>
-        public UserInfo QuerySingle(object wheres)
+        public File QuerySingle(object wheres)
         {
             return dal.QuerySingle(wheres);
         }
@@ -196,13 +154,13 @@ namespace lks.webapi.BLL
         /// <summary>
         /// 获得数据列表
         /// </summary>
-        public List<UserInfo> DataTableToList(DataTable dt)
+        public List<File> DataTableToList(DataTable dt)
         {
-            List<UserInfo> modelList = new List<UserInfo>();
+            List<File> modelList = new List<File>();
             int rowsCount = dt.Rows.Count;
             if (rowsCount > 0)
             {
-                UserInfo model;
+                File model;
                 foreach (DataRow row in dt.Rows)
                 {
                     model = dal.GetModel(row);

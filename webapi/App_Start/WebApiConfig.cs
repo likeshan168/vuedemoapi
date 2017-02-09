@@ -19,6 +19,8 @@ namespace webapi
             config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new  CamelCasePropertyNamesContractResolver();
             // 对 JSON 数据使用混合大小写。跟属性名同样的大小.输出
             //config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new DefaultContractResolver();
+            // 使api返回为json 
+            config.Formatters.XmlFormatter.SupportedMediaTypes.Clear();
             // Web API routes
             config.MapHttpAttributeRoutes();
             //只有这样配置的跨域访问才有效果

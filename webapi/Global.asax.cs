@@ -9,9 +9,22 @@ namespace webapi
 {
     public class WebApiApplication : System.Web.HttpApplication
     {
+        private const string WebApiPrefix = "api";
+        private static string WebApiExecutePath = string.Format("~/{0}", WebApiPrefix);
         protected void Application_Start()
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);
+        }
+        private bool IsWebAPiRequest()
+        {
+            return HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath.StartsWith(WebApiExecutePath);
+        }
+        protected void Application_PostAuthorizeRequest()
+        {
+            if (IsWebAPiRequest())
+            {
+                HttpContext.Current.SetSessionStateBehavior(System.Web.SessionState.SessionStateBehavior.Required);
+            }
         }
     }
 }
