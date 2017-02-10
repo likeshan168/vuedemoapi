@@ -160,19 +160,23 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Attribute\CrossSiteAttribute.cs" />
+    <Compile Include="BLL\Commission.cs" />
     <Compile Include="BLL\File.cs" />
+    <Compile Include="BLL\FileService.cs" />
     <Compile Include="BLL\UserInfo.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BasicController.cs" />
     <Compile Include="Controllers\CommissionController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
+    <Compile Include="DAL\Commission.cs" />
     <Compile Include="DAL\File.cs" />
     <Compile Include="DAL\UserInfo.cs" />
     <Compile Include="Extension\MyExt.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Model\Commission.cs" />
     <Compile Include="Model\File.cs" />
     <Compile Include="Model\FileResponse.cs" />
     <Compile Include="Model\PagePara.cs" />
@@ -199,7 +203,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
     <Folder Include="Uploads\" />
   </ItemGroup>
   <PropertyGroup>
