@@ -12,15 +12,15 @@ namespace lks.webapi.DAL
     public partial class CommissionDAO
     {
 
-        public bool Exists(string 工作单号)
+        public bool Exists(string 工作号)
         {
             StringBuilder strSql = new StringBuilder();
             strSql.Append("select count(1) from Commission");
             strSql.Append(" where ");
-            strSql.Append(" 工作单号 = @工作单号  ");
+            strSql.Append(" 工作号 = @工作号  ");
             SqlParameter[] parameters = {
-                    new SqlParameter("@工作单号", SqlDbType.NVarChar,50)            };
-            parameters[0].Value = 工作单号;
+                    new SqlParameter("@工作号", SqlDbType.NVarChar,50)         };
+            parameters[0].Value = 工作号;
 
             return SqlHelper.Exists(strSql.ToString(), parameters);
         }
@@ -34,18 +34,18 @@ namespace lks.webapi.DAL
         {
             StringBuilder strSql = new StringBuilder();
             strSql.Append("insert into Commission(");
-            strSql.Append("工作单号,业务员,委托人简称,利润(RMB),应收折合(RMB),未收折合RMB,收款日期,超期日期,月数,超期回款资金成本,金额列,工作单日期,KB");
+            strSql.Append("工作号,业务员,委托人简称,利润,应收折合,未收折合,收款日期,超期日期,月数,超期回款资金成本,金额列,工作单日期,KB");
             strSql.Append(") values (");
-            strSql.Append("@工作单号,@业务员,@委托人简称,@利润(RMB),@应收折合(RMB),@未收折合RMB,@收款日期,@超期日期,@月数,@超期回款资金成本,@金额列,@工作单日期,@KB");
+            strSql.Append("@工作号,@业务员,@委托人简称,@利润,@应收折合,@未收折合,@收款日期,@超期日期,@月数,@超期回款资金成本,@金额列,@工作单日期,@KB");
             strSql.Append(") ");
 
             SqlParameter[] parameters = {
-                        new SqlParameter("@工作单号", SqlDbType.NVarChar,50) ,
+                        new SqlParameter("@工作号", SqlDbType.NVarChar,50) ,
                         new SqlParameter("@业务员", SqlDbType.NVarChar,50) ,
                         new SqlParameter("@委托人简称", SqlDbType.NVarChar,50) ,
-                        new SqlParameter("@利润(RMB)", SqlDbType.Decimal,9) ,
-                        new SqlParameter("@应收折合(RMB)", SqlDbType.Decimal,9) ,
-                        new SqlParameter("@未收折合RMB", SqlDbType.Decimal,9) ,
+                        new SqlParameter("@利润", SqlDbType.Decimal,9) ,
+                        new SqlParameter("@应收折合", SqlDbType.Decimal,9) ,
+                        new SqlParameter("@未收折合", SqlDbType.Decimal,9) ,
                         new SqlParameter("@收款日期", SqlDbType.Date,3) ,
                         new SqlParameter("@超期日期", SqlDbType.Date,3) ,
                         new SqlParameter("@月数", SqlDbType.Int,4) ,
@@ -56,7 +56,7 @@ namespace lks.webapi.DAL
 
             };
 
-            parameters[0].Value = model.工作单号;
+            parameters[0].Value = model.工作号;
             parameters[1].Value = model.业务员;
             parameters[2].Value = model.委托人简称;
             parameters[3].Value = model.利润;
@@ -74,6 +74,35 @@ namespace lks.webapi.DAL
         }
 
 
+        public void AddAndUpdate(IList<Commission> models, int columnCount)
+        {
+            StringBuilder strSql = new StringBuilder();
+            foreach (Commission item in models)
+            {
+                strSql.AppendFormat($"SELECT 工作号 FROM dbo.Commission WHERE 工作号='{item.工作号}' if @@ROWCOUNT>0 ");
+                if (columnCount == 5)
+                {
+                    strSql.AppendFormat($"update Commission set 委托人简称 = '{item.委托人简称}', 应收折合={item.应收折合},利润={item.利润},未收折合={item.未收折合} where 工作号='{item.工作号}' ");
+                    strSql.AppendFormat($"else insert Commission(工作号,委托人简称,应收折合,利润,未收折合) values('{item.工作号}','{item.委托人简称}',{item.应收折合},{item.利润},{item.未收折合});");
+                }
+                else if (columnCount == 4)
+                {
+                    strSql.AppendFormat($"update Commission set 业务员 = '{item.业务员}', 工作单日期='{item.工作单日期}',收款日期='{item.收款日期}' where 工作号='{item.工作号}' ");
+                    strSql.AppendFormat($"else insert Commission(工作号,业务员,工作单日期,收款日期) values('{item.工作号}','{item.业务员}','{item.工作单日期}','{item.收款日期}');");
+                }
+                else if (columnCount == 2)
+                {
+                    strSql.AppendFormat($"update Commission set KB = {item.KB} where 工作号='{item.工作号}' ");
+                    strSql.AppendFormat($"else insert Commission(工作号,KB) values('{item.工作号}',{item.KB});");
+                }
+            }
+
+            SqlHelper.ExecuteSql(strSql.ToString());
+        }
+
+
+
+
         /// <summary>
         /// 更新一条数据
         /// </summary>
@@ -82,12 +111,12 @@ namespace lks.webapi.DAL
             StringBuilder strSql = new StringBuilder();
             strSql.Append("update Commission set ");
 
-            strSql.Append(" 工作单号 = @工作单号 , ");
+            strSql.Append(" 工作号 = @工作号 , ");
             strSql.Append(" 业务员 = @业务员 , ");
             strSql.Append(" 委托人简称 = @委托人简称 , ");
-            strSql.Append(" 利润(RMB) = @利润(RMB) , ");
-            strSql.Append(" 应收折合(RMB) = @应收折合(RMB) , ");
-            strSql.Append(" 未收折合RMB = @未收折合RMB , ");
+            strSql.Append(" 利润 = @利润 , ");
+            strSql.Append(" 应收折合 = @应收折合 , ");
+            strSql.Append(" 未收折合 = @未收折合 , ");
             strSql.Append(" 收款日期 = @收款日期 , ");
             strSql.Append(" 超期日期 = @超期日期 , ");
             strSql.Append(" 月数 = @月数 , ");
@@ -95,15 +124,15 @@ namespace lks.webapi.DAL
             strSql.Append(" 金额列 = @金额列 , ");
             strSql.Append(" 工作单日期 = @工作单日期 , ");
             strSql.Append(" KB = @KB  ");
-            strSql.Append(" where 工作单号=@工作单号  ");
+            strSql.Append(" where 工作号=@工作号  ");
 
             SqlParameter[] parameters = {
-                        new SqlParameter("@工作单号", SqlDbType.NVarChar,50) ,
+                        new SqlParameter("@工作号", SqlDbType.NVarChar,50) ,
                         new SqlParameter("@业务员", SqlDbType.NVarChar,50) ,
                         new SqlParameter("@委托人简称", SqlDbType.NVarChar,50) ,
-                        new SqlParameter("@利润(RMB)", SqlDbType.Decimal,9) ,
-                        new SqlParameter("@应收折合(RMB)", SqlDbType.Decimal,9) ,
-                        new SqlParameter("@未收折合RMB", SqlDbType.Decimal,9) ,
+                        new SqlParameter("@利润", SqlDbType.Decimal,9) ,
+                        new SqlParameter("@应收折合", SqlDbType.Decimal,9) ,
+                        new SqlParameter("@未收折合", SqlDbType.Decimal,9) ,
                         new SqlParameter("@收款日期", SqlDbType.Date,3) ,
                         new SqlParameter("@超期日期", SqlDbType.Date,3) ,
                         new SqlParameter("@月数", SqlDbType.Int,4) ,
@@ -114,7 +143,7 @@ namespace lks.webapi.DAL
 
             };
 
-            parameters[0].Value = model.工作单号;
+            parameters[0].Value = model.工作号;
             parameters[1].Value = model.业务员;
             parameters[2].Value = model.委托人简称;
             parameters[3].Value = model.利润;
@@ -142,15 +171,15 @@ namespace lks.webapi.DAL
         /// <summary>
         /// 删除一条数据
         /// </summary>
-        public bool Delete(string 工作单号)
+        public bool Delete(string 工作号)
         {
 
             StringBuilder strSql = new StringBuilder();
             strSql.Append("delete from Commission ");
-            strSql.Append(" where 工作单号=@工作单号 ");
+            strSql.Append(" where 工作号=@工作号 ");
             SqlParameter[] parameters = {
-                    new SqlParameter("@工作单号", SqlDbType.NVarChar,50)            };
-            parameters[0].Value = 工作单号;
+                    new SqlParameter("@工作号", SqlDbType.NVarChar,50)         };
+            parameters[0].Value = 工作号;
 
 
             int rows = SqlHelper.ExecuteSql(strSql.ToString(), parameters);
@@ -169,16 +198,16 @@ namespace lks.webapi.DAL
         /// <summary>
         /// 得到一个对象实体
         /// </summary>
-        public Commission GetModel(string 工作单号)
+        public Commission GetModel(string 工作号)
         {
 
             StringBuilder strSql = new StringBuilder();
-            strSql.Append("select 工作单号, 业务员, 委托人简称, 利润(RMB), 应收折合(RMB), 未收折合RMB, 收款日期, 超期日期, 月数, 超期回款资金成本, 金额列, 工作单日期, KB  ");
+            strSql.Append("select 工作号, 业务员, 委托人简称, 利润, 应收折合, 未收折合, 收款日期, 超期日期, 月数, 超期回款资金成本, 金额列, 工作单日期, KB  ");
             strSql.Append("  from Commission ");
-            strSql.Append(" where 工作单号=@工作单号 ");
+            strSql.Append(" where 工作号=@工作号 ");
             SqlParameter[] parameters = {
-                    new SqlParameter("@工作单号", SqlDbType.NVarChar,50)            };
-            parameters[0].Value = 工作单号;
+                    new SqlParameter("@工作号", SqlDbType.NVarChar,50)         };
+            parameters[0].Value = 工作号;
 
 
             return SqlHelper.MapEntity<Commission>(SqlHelper.ExecuteReader(strSql.ToString(), parameters));
@@ -236,7 +265,7 @@ namespace lks.webapi.DAL
         public int QueryCount(object wheres)
         {
             StringBuilder strSql = new StringBuilder();
-            strSql.Append("select count(工作单号)");
+            strSql.Append("select count(工作号)");
             strSql.Append("  from Commission ");
             string where = SqlHelper.GetWhere(wheres);
             strSql.Append(where);
@@ -251,10 +280,10 @@ namespace lks.webapi.DAL
         /// <param name="orderField">排序字段</param>
         /// <param name="isDesc">是否降序</param>
         /// <returns>数据列表</returns>
-        public IEnumerable<Commission> QueryList(int index, int size, object wheres, string orderField, bool isDesc = true)
+        public IEnumerable<Commission> QueryList(int index, int size, object wheres, string orderField, out int total, bool isDesc = true)
         {
             string sql = SqlHelper.GenerateQuerySql("Commission", null, index, size, wheres, orderField, isDesc);
-            return SqlHelper.GetList<Commission>(sql, null);
+            return SqlHelper.GetList<Commission>(sql, null, out total);
         }
         /// <summary>
         /// 根据条件获取单条数据
@@ -263,7 +292,7 @@ namespace lks.webapi.DAL
         /// <returns>指定条件的数据</returns>
         public Commission QuerySingle(object wheres)
         {
-            string sql = SqlHelper.GenerateQuerySql("Commission", null, 1, 1, wheres, "工作单号");
+            string sql = SqlHelper.GenerateQuerySql("Commission", null, 1, 1, wheres, "工作号");
             return SqlHelper.QuerySingle<Commission>(sql, null);
         }
 

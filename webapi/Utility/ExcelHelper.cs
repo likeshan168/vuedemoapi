@@ -370,9 +370,9 @@ namespace lks.webapi.Utility
                             {
                                 "工作号",
                                 "委托人简称",
-                                "应收折合(RMB)",
-                                "利润(RMB)",
-                                "未收折合RMB"
+                                "应收折合",
+                                "利润",
+                                "未收折合"
                             });
                         }
                         else
@@ -399,7 +399,7 @@ namespace lks.webapi.Utility
                                 "KB"
                             });
                     }
-
+                    string newColumnName = string.Empty;
                     if (isFirstRowColumn)
                     {
                         for (int i = firstRow.FirstCellNum; i < cellCount; ++i)
@@ -408,10 +408,10 @@ namespace lks.webapi.Utility
                             if (cell != null)
                             {
                                 string cellValue = cell.StringCellValue;
-                                if (cellValue != null && cols.Contains(cellValue))
+                                if (cellValue != null && IsColumnMatched(cols, cellValue, out newColumnName))
                                 {
                                     colIndexes.Add(i);
-                                    DataColumn column = new DataColumn(cellValue);
+                                    DataColumn column = new DataColumn(newColumnName);
                                     data.Columns.Add(column);
                                 }
                             }
@@ -485,6 +485,23 @@ namespace lks.webapi.Utility
                 fs = null;
                 disposed = true;
             }
+        }
+
+        private bool IsColumnMatched(List<string> columns, string columnName, out string newColumnName)
+        {
+            newColumnName = string.Empty;
+            foreach (string column in columns)
+            {
+                if (columnName.StartsWith(column))
+                {
+                    newColumnName = column;
+                    return true;
+                }
+                else
+                    continue;
+            }
+
+            return false;
         }
     }
 }

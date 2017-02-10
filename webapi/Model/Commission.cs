@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Xml.Serialization;
-
 namespace lks.webapi.Model
 {
     //Commission
     public class Commission
     {
         /// <summary>
-        /// 工作单号
+        /// 工作号
         /// </summary>		
-        public string 工作单号 { get; set; }
+        public string 工作号 { get; set; }
         /// <summary>
         /// 业务员
         /// </summary>		
@@ -19,20 +17,16 @@ namespace lks.webapi.Model
         /// </summary>		
         public string 委托人简称 { get; set; }
         /// <summary>
-        /// 利润(RMB)
-        /// </summary>	
-        [XmlAttribute("利润(RMB)")]
+        /// 利润
+        /// </summary>		
         public decimal 利润 { get; set; }
         /// <summary>
-        /// 应收折合(RMB)
+        /// 应收折合
         /// </summary>		
-        [XmlAttribute("应收折合(RMB)")]
-
         public decimal 应收折合 { get; set; }
         /// <summary>
-        /// 未收折合RMB
+        /// 未收折合
         /// </summary>		
-        [XmlAttribute("未收折合RMB")]
         public decimal 未收折合 { get; set; }
         /// <summary>
         /// 收款日期

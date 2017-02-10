@@ -18,9 +18,9 @@ namespace lks.webapi.BLL
         /// <summary>
         /// 是否存在该记录
         /// </summary>
-        public bool Exists(string 工作单号)
+        public bool Exists(string 工作号)
         {
-            return dal.Exists(工作单号);
+            return dal.Exists(工作号);
         }
 
         /// <summary>
@@ -31,7 +31,10 @@ namespace lks.webapi.BLL
             dal.Add(model);
 
         }
-
+        public void AddAndUpdate(IList<Commission> models, int columnCount)
+        {
+            dal.AddAndUpdate(models, columnCount);
+        }
         /// <summary>
         /// 更新一条数据
         /// </summary>
@@ -43,34 +46,34 @@ namespace lks.webapi.BLL
         /// <summary>
         /// 删除一条数据
         /// </summary>
-        public bool Delete(string 工作单号)
+        public bool Delete(string 工作号)
         {
 
-            return dal.Delete(工作单号);
+            return dal.Delete(工作号);
         }
 
         /// <summary>
         /// 得到一个对象实体
         /// </summary>
-        public Commission GetModel(string 工作单号)
+        public Commission GetModel(string 工作号)
         {
 
-            return dal.GetModel(工作单号);
+            return dal.GetModel(工作号);
         }
 
         /// <summary>
         /// 得到一个对象实体，从缓存中
         /// </summary>
-        public Commission GetModelByCache(string 工作单号)
+        public Commission GetModelByCache(string 工作号)
         {
 
-            string CacheKey = "CommissionModel-" + 工作单号;
+            string CacheKey = "CommissionModel-" + 工作号;
             object objModel = DataCache.GetCache(CacheKey);
             if (objModel == null)
             {
                 try
                 {
-                    objModel = dal.GetModel(工作单号);
+                    objModel = dal.GetModel(工作号);
                     if (objModel != null)
                     {
                         int ModelCache = ConfigHelper.GetConfigInt("ModelCache");
@@ -113,9 +116,9 @@ namespace lks.webapi.BLL
         /// <param name="orderField">排序字段</param>
         /// <param name="isDesc">是否降序</param>
         /// <returns>数据列表</returns>
-        public IEnumerable<Commission> QueryList(int index, int size, object wheres, string orderField, bool isDesc = true)
+        public IEnumerable<Commission> QueryList(int index, int size, object wheres, string orderField, out int total, bool isDesc = true)
         {
-            return dal.QueryList(index, size, wheres, orderField, isDesc);
+            return dal.QueryList(index, size, wheres, orderField, out total, isDesc);
         }
         /// <summary>
         /// 查询单条数据
