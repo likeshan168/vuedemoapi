@@ -5,8 +5,10 @@ using System.Web;
 
 namespace lks.webapi.Model
 {
+    [Serializable]
     public class FileDataRequest
     {
+        //public FileDataRequest() { }
         /// <summary>
         /// 列数，用这个来区分不同的excel文件
         /// </summary>

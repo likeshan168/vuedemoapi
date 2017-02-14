@@ -4,6 +4,7 @@ namespace lks.webapi.Model
     //Commission
     public class Commission
     {
+        //public Commission() { }
         /// <summary>
         /// 工作号
         /// </summary>		
@@ -45,9 +46,9 @@ namespace lks.webapi.Model
         /// </summary>		
         public decimal 超期回款资金成本 { get; set; }
         /// <summary>
-        /// 金额列
+        /// 金额
         /// </summary>		
-        public decimal 金额列 { get; set; }
+        public decimal 金额 { get; set; }
         /// <summary>
         /// 工作单日期
         /// </summary>		

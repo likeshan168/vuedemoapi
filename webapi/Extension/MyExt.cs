@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using System.Web.Script.Serialization;
 
 namespace lks.webapi.Extension
@@ -22,15 +23,103 @@ namespace lks.webapi.Extension
             ArrayList arrayList = new ArrayList();
             foreach (DataRow dataRow in dt.Rows)
             {
+
                 Dictionary<string, object> dictionary = new Dictionary<string, object>();  //实例化一个参数集合
+                Type t;
                 foreach (DataColumn dataColumn in dt.Columns)
                 {
-                    dictionary.Add(dataColumn.ColumnName, dataRow[dataColumn.ColumnName].ToStr());
+                    t = dataColumn.DataType;
+                    if (t == typeof(int))
+                    {
+                        dictionary.Add(dataColumn.ColumnName, dataRow.Field<int>(dataColumn.ColumnName));
+                    }
+                    else if (t == typeof(decimal))
+                    {
+                        dictionary.Add(dataColumn.ColumnName, dataRow.Field<decimal>(dataColumn.ColumnName));
+                    }
+                    else if (t == typeof(DateTime))
+                    {
+                        dictionary.Add(dataColumn.ColumnName, dataRow.Field<DateTime>(dataColumn.ColumnName));
+                    }
+                    else if (t == typeof(string))
+                    {
+                        dictionary.Add(dataColumn.ColumnName, dataRow.Field<string>(dataColumn.ColumnName));
+                    }
+                    else if (t == typeof(long))
+                    {
+                        dictionary.Add(dataColumn.ColumnName, dataRow.Field<long>(dataColumn.ColumnName));
+                    }
+                    else if (t == typeof(double))
+                    {
+                        dictionary.Add(dataColumn.ColumnName, dataRow.Field<double>(dataColumn.ColumnName));
+                    }
                 }
                 arrayList.Add(dictionary); //ArrayList集合中添加键值
             }
 
             return javaScriptSerializer.Serialize(arrayList);  //返回一个json字符串
+        }
+
+        public static string ToJson2(this DataTable dt)
+        {
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("[");
+            foreach (DataRow dataRow in dt.Rows)
+            {
+                sb.Append("{");
+
+                Type t;
+                foreach (DataColumn dataColumn in dt.Columns)
+                {
+                    t = dataColumn.DataType;
+                    if (t == typeof(int))
+                    {
+                        sb.Append($"\"{dataColumn.ColumnName}\":{(dataRow.IsNull(dataColumn.ColumnName) ? 0 : dataRow.Field<int>(dataColumn.ColumnName))},");
+                    }
+                    else if (t == typeof(decimal))
+                    {
+                        sb.Append($"\"{dataColumn.ColumnName}\":{(dataRow.IsNull(dataColumn.ColumnName) ? 0 : dataRow.Field<decimal>(dataColumn.ColumnName))},");
+                    }
+                    else if (t == typeof(DateTime))
+                    {
+                        if (dataRow.IsNull(dataColumn.ColumnName))
+                        {
+                            sb.Append($"\"{dataColumn.ColumnName}\":{-2174803200000},");
+                        }
+                        else
+                        {
+                            sb.Append($"\"{dataColumn.ColumnName}\":{GetTimeLikeJS(dataRow.Field<DateTime>(dataColumn.ColumnName))},");
+                        }
+                    }
+                    else if (t == typeof(string))
+                    {
+                        sb.Append($"\"{dataColumn.ColumnName}\":\"{(dataRow.IsNull(dataColumn.ColumnName) ? string.Empty : dataRow.Field<string>(dataColumn.ColumnName))}\",");
+                    }
+                    else if (t == typeof(long))
+                    {
+                        sb.Append($"\"{dataColumn.ColumnName}\":{(dataRow.IsNull(dataColumn.ColumnName) ? 0 : dataRow.Field<long>(dataColumn.ColumnName))},");
+                    }
+                    else if (t == typeof(double))
+                    {
+                        sb.Append($"\"{dataColumn.ColumnName}\":{(dataRow.IsNull(dataColumn.ColumnName) ? 0 : dataRow.Field<double>(dataColumn.ColumnName))},");
+                    }
+                }
+                sb.Remove(sb.Length - 1, 1);
+                sb.Append("},");
+            }
+            if (sb.Length > 0)
+            {
+                sb = sb.Remove(sb.Length - 1, 1);
+                sb.Append("]");
+            }
+            else
+            {
+                sb.Append("]");
+            }
+
+            return sb.ToString();
+
         }
         #endregion
 
@@ -110,5 +199,29 @@ namespace lks.webapi.Extension
             return result;
         }
         #endregion
+
+        private static long lLeft = 621355968000000000;
+
+        //将数字变成时间
+        public static string GetTimeFromInt(long ltime)
+        {
+            long Eticks = (long)(ltime * 10000000) + lLeft;
+            DateTime dt = new DateTime(Eticks).ToLocalTime();
+            return dt.ToString();
+        }
+        //将时间变成数字
+        public static long GetIntFromTime(DateTime dt)
+        {
+            DateTime dt1 = dt.ToUniversalTime();
+            long Sticks = (dt1.Ticks - lLeft) / 10000000;
+            return Sticks;
+        }
+
+        public static long GetTimeLikeJS(DateTime dt)
+        {
+            long lLeft = 621355968000000000;
+            long Sticks = (dt.Ticks - lLeft) / 10000;
+            return Sticks;
+        }
     }
 }

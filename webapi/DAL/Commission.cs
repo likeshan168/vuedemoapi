@@ -34,9 +34,9 @@ namespace lks.webapi.DAL
         {
             StringBuilder strSql = new StringBuilder();
             strSql.Append("insert into Commission(");
-            strSql.Append("工作号,业务员,委托人简称,利润,应收折合,未收折合,收款日期,超期日期,月数,超期回款资金成本,金额列,工作单日期,KB");
+            strSql.Append("工作号,业务员,委托人简称,利润,应收折合,未收折合,收款日期,超期日期,月数,超期回款资金成本,金额,工作单日期,KB");
             strSql.Append(") values (");
-            strSql.Append("@工作号,@业务员,@委托人简称,@利润,@应收折合,@未收折合,@收款日期,@超期日期,@月数,@超期回款资金成本,@金额列,@工作单日期,@KB");
+            strSql.Append("@工作号,@业务员,@委托人简称,@利润,@应收折合,@未收折合,@收款日期,@超期日期,@月数,@超期回款资金成本,@金额,@工作单日期,@KB");
             strSql.Append(") ");
 
             SqlParameter[] parameters = {
@@ -50,7 +50,7 @@ namespace lks.webapi.DAL
                         new SqlParameter("@超期日期", SqlDbType.Date,3) ,
                         new SqlParameter("@月数", SqlDbType.Int,4) ,
                         new SqlParameter("@超期回款资金成本", SqlDbType.Decimal,9) ,
-                        new SqlParameter("@金额列", SqlDbType.Decimal,9) ,
+                        new SqlParameter("@金额", SqlDbType.Decimal,9) ,
                         new SqlParameter("@工作单日期", SqlDbType.Date,3) ,
                         new SqlParameter("@KB", SqlDbType.Decimal,9)
 
@@ -66,7 +66,7 @@ namespace lks.webapi.DAL
             parameters[7].Value = model.超期日期;
             parameters[8].Value = model.月数;
             parameters[9].Value = model.超期回款资金成本;
-            parameters[10].Value = model.金额列;
+            parameters[10].Value = model.金额;
             parameters[11].Value = model.工作单日期;
             parameters[12].Value = model.KB;
             SqlHelper.ExecuteSql(strSql.ToString(), parameters);
@@ -95,6 +95,11 @@ namespace lks.webapi.DAL
                     strSql.AppendFormat($"update Commission set KB = {item.KB} where 工作号='{item.工作号}' ");
                     strSql.AppendFormat($"else insert Commission(工作号,KB) values('{item.工作号}',{item.KB});");
                 }
+                else if (columnCount == 0)
+                {
+                    strSql.AppendFormat($"update Commission set 业务员 = '{item.业务员}',委托人简称 = '{item.委托人简称}',利润={item.利润},应收折合={item.应收折合},未收折合={item.未收折合}, 收款日期='{item.收款日期}',超期日期='{item.超期日期}',月数={item.月数},超期回款资金成本={item.超期回款资金成本},金额 = {item.金额},工作单日期 = '{item.工作单日期}',KB = {item.KB} where 工作号='{item.工作号}' ");
+                    strSql.AppendFormat($"else insert Commission(工作号 ,业务员 ,委托人简称 ,利润 ,应收折合 ,未收折合 ,收款日期 ,超期日期 ,月数 ,超期回款资金成本 ,金额 ,工作单日期 ,KB) values('{item.工作号}','{item.业务员}','{item.委托人简称}',{item.利润},{item.应收折合},{item.未收折合},'{item.收款日期}','{item.超期日期}',{item.月数},{item.超期回款资金成本},{item.金额},'{item.工作单日期}',{item.KB});");
+                }
             }
 
             SqlHelper.ExecuteSql(strSql.ToString());
@@ -121,7 +126,7 @@ namespace lks.webapi.DAL
             strSql.Append(" 超期日期 = @超期日期 , ");
             strSql.Append(" 月数 = @月数 , ");
             strSql.Append(" 超期回款资金成本 = @超期回款资金成本 , ");
-            strSql.Append(" 金额列 = @金额列 , ");
+            strSql.Append(" 金额 = @金额 , ");
             strSql.Append(" 工作单日期 = @工作单日期 , ");
             strSql.Append(" KB = @KB  ");
             strSql.Append(" where 工作号=@工作号  ");
@@ -137,7 +142,7 @@ namespace lks.webapi.DAL
                         new SqlParameter("@超期日期", SqlDbType.Date,3) ,
                         new SqlParameter("@月数", SqlDbType.Int,4) ,
                         new SqlParameter("@超期回款资金成本", SqlDbType.Decimal,9) ,
-                        new SqlParameter("@金额列", SqlDbType.Decimal,9) ,
+                        new SqlParameter("@金额", SqlDbType.Decimal,9) ,
                         new SqlParameter("@工作单日期", SqlDbType.Date,3) ,
                         new SqlParameter("@KB", SqlDbType.Decimal,9)
 
@@ -153,7 +158,7 @@ namespace lks.webapi.DAL
             parameters[7].Value = model.超期日期;
             parameters[8].Value = model.月数;
             parameters[9].Value = model.超期回款资金成本;
-            parameters[10].Value = model.金额列;
+            parameters[10].Value = model.金额;
             parameters[11].Value = model.工作单日期;
             parameters[12].Value = model.KB;
             int rows = SqlHelper.ExecuteSql(strSql.ToString(), parameters);
@@ -193,6 +198,28 @@ namespace lks.webapi.DAL
             }
         }
 
+        public bool BatchDelete(IEnumerable<Commission> commissions)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append("delete from Commission where 工作号 in(");
+            foreach (Commission item in commissions)
+            {
+                strSql.Append($"'{item.工作号}',");
+            }
+            strSql.Remove(strSql.Length - 1, 1);
+            strSql.Append(')');
+
+            int rows = SqlHelper.ExecuteSql(strSql.ToString());
+            if (rows > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
 
 
         /// <summary>
@@ -202,7 +229,7 @@ namespace lks.webapi.DAL
         {
 
             StringBuilder strSql = new StringBuilder();
-            strSql.Append("select 工作号, 业务员, 委托人简称, 利润, 应收折合, 未收折合, 收款日期, 超期日期, 月数, 超期回款资金成本, 金额列, 工作单日期, KB  ");
+            strSql.Append("select 工作号, 业务员, 委托人简称, 利润, 应收折合, 未收折合, 收款日期, 超期日期, 月数, 超期回款资金成本, 金额, 工作单日期, KB  ");
             strSql.Append("  from Commission ");
             strSql.Append(" where 工作号=@工作号 ");
             SqlParameter[] parameters = {
@@ -262,7 +289,7 @@ namespace lks.webapi.DAL
         /// </summary>
         /// <param name="wheres">查询条件</param>
         /// <returns>返回条数</returns>
-        public int QueryCount(object wheres)
+        public int QueryCount(string wheres)
         {
             StringBuilder strSql = new StringBuilder();
             strSql.Append("select count(工作号)");
@@ -280,9 +307,9 @@ namespace lks.webapi.DAL
         /// <param name="orderField">排序字段</param>
         /// <param name="isDesc">是否降序</param>
         /// <returns>数据列表</returns>
-        public IEnumerable<Commission> QueryList(int index, int size, object wheres, string orderField, out int total, bool isDesc = true)
+        public IEnumerable<Commission> QueryList(IEnumerable<string> columns, int index, int size, string wheres, string orderField, out int total, bool isDesc = true)
         {
-            string sql = SqlHelper.GenerateQuerySql("Commission", null, index, size, wheres, orderField, isDesc);
+            string sql = SqlHelper.GenerateQuerySql("Commission", columns, index, size, wheres, orderField, isDesc);
             return SqlHelper.GetList<Commission>(sql, null, out total);
         }
         /// <summary>
@@ -290,7 +317,7 @@ namespace lks.webapi.DAL
         /// </summary>
         /// <param name="wheres">查询条件</param>
         /// <returns>指定条件的数据</returns>
-        public Commission QuerySingle(object wheres)
+        public Commission QuerySingle(string wheres)
         {
             string sql = SqlHelper.GenerateQuerySql("Commission", null, 1, 1, wheres, "工作号");
             return SqlHelper.QuerySingle<Commission>(sql, null);

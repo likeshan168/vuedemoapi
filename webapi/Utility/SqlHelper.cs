@@ -1125,7 +1125,7 @@ namespace lks.webapi.Utility
         /// <param name="orderField">排序字段</param>
         /// <param name="isDesc">是否为降序</param>
         /// <returns>sql语句</returns>
-        public static string GenerateQuerySql(string table, string[] columns, int index, int size, object where, string orderField, bool isDesc = true)
+        public static string GenerateQuerySql(string table, IEnumerable<string> columns, int index, int size, string where, string orderField, bool isDesc = true)
         {
             if (index == 1)
             {
@@ -1141,20 +1141,20 @@ namespace lks.webapi.Utility
                 throw new ArgumentNullException("orderField");
             }
             string column = columns != null && columns.Any() ? string.Join(",", columns) : "*";
-            return $"select {column} from (select row_number() over(order by [{orderField}] {(isDesc ? "desc" : string.Empty)}) as num, {column} from [{table}] {GetWhere(where)}) as tb1 where tb1.num between {(index - 1) * size + 1} and {index * size};select count({column}) from [{table}] {GetWhere(where)};";
+            return $"select {column} from (select row_number() over(order by [{orderField}] {(isDesc ? "desc" : string.Empty)}) as num, {column} from [{table}] {GetWhere(where)}) as tb1 where tb1.num between {(index - 1) * size + 1} and {index * size};select count(*) from [{table}] {GetWhere(where)};";
         }
 
-        private static string GenerateQuerySql(string table, string[] columns, object where, string orderField, bool isDesc)
+        private static string GenerateQuerySql(string table, IEnumerable<string> columns, string where, string orderField, bool isDesc)
         {
             //where = string.IsNullOrWhiteSpace(where) ? string.Empty : $"where {where}";
             string column = columns != null && columns.Any() ? string.Join(",", columns) : "*";
-            return $"select {column} from {table} {GetWhere(where)} {(string.IsNullOrWhiteSpace(orderField) ? string.Empty : $"order by {orderField}")} {(isDesc && !string.IsNullOrWhiteSpace(orderField) ? "desc" : string.Empty)};select count({column}) from [{table}] {GetWhere(where)};";
+            return $"select {column} from {table} {GetWhere(where)} {(string.IsNullOrWhiteSpace(orderField) ? string.Empty : $"order by {orderField}")} {(isDesc && !string.IsNullOrWhiteSpace(orderField) ? "desc" : string.Empty)};select count(*) from [{table}] {GetWhere(where)};";
         }
 
-        private static string GenerateQuerySql(string table, string[] columns, int size, object where, string orderField, bool isDesc)
+        private static string GenerateQuerySql(string table, IEnumerable<string> columns, int size, string where, string orderField, bool isDesc)
         {
             string column = columns != null && columns.Any() ? string.Join(",", columns) : "*";
-            return $"select top {size} {column} from {table} {GetWhere(where)} {(string.IsNullOrWhiteSpace(orderField) ? string.Empty : $"order by {orderField}")} {(isDesc && !string.IsNullOrWhiteSpace(orderField) ? "desc" : string.Empty)};select count({column}) from [{table}] {GetWhere(where)};";
+            return $"select top {size} {column} from {table} {GetWhere(where)} {(string.IsNullOrWhiteSpace(orderField) ? string.Empty : $"order by {orderField}")} {(isDesc && !string.IsNullOrWhiteSpace(orderField) ? "desc" : string.Empty)};select count(*) from [{table}] {GetWhere(where)};";
         }
 
         //public static string GetWhere(object where)
@@ -1172,7 +1172,7 @@ namespace lks.webapi.Utility
         //    return ws.Substring(0, ws.Length - 5);
         //}
 
-        public static string GetWhere(object where)
+        public static string GetWhere(string where)
         {
             if (where == null||string.IsNullOrWhiteSpace(where.ToString()))
                 return string.Empty;

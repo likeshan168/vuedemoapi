@@ -203,7 +203,7 @@ namespace lks.webapi.DAL
         /// </summary>
         /// <param name="wheres">查询条件</param>
         /// <returns>返回条数</returns>
-        public int QueryCount(object wheres)
+        public int QueryCount(string wheres)
         {
             StringBuilder strSql = new StringBuilder();
             strSql.Append("select count(Id)");
@@ -221,7 +221,7 @@ namespace lks.webapi.DAL
         /// <param name="orderField">排序字段</param>
         /// <param name="isDesc">是否降序</param>
         /// <returns>数据列表</returns>
-        public IEnumerable<File> QueryList(int index, int size, object wheres, string orderField, bool isDesc = true)
+        public IEnumerable<File> QueryList(int index, int size, string wheres, string orderField, bool isDesc = true)
         {
             string sql = SqlHelper.GenerateQuerySql("File", null, index, size, wheres, orderField, isDesc);
             return SqlHelper.GetList<File>(sql, null);
@@ -231,7 +231,7 @@ namespace lks.webapi.DAL
         /// </summary>
         /// <param name="wheres">查询条件</param>
         /// <returns>指定条件的数据</returns>
-        public File QuerySingle(object wheres)
+        public File QuerySingle(string wheres)
         {
             string sql = SqlHelper.GenerateQuerySql("File", null, 1, 1, wheres, "Id");
             return SqlHelper.QuerySingle<File>(sql, null);

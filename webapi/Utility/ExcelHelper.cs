@@ -316,7 +316,8 @@ namespace lks.webapi.Utility
         {
             ISheet sheet = null;
             DataTable data = new DataTable();
-            List<string> cols = new List<string>();
+            //List<string> cols = new List<string>();
+            Dictionary<string, string> cols = new Dictionary<string, string>();
             List<int> colIndexes = new List<int>();
 
             int startRow = 0;
@@ -366,25 +367,34 @@ namespace lks.webapi.Utility
                             firstRow = sheet.GetRow(7);
                             rowCount = rowCount - 5;
                             //范例1excel表中包含的列
-                            cols.AddRange(new List<string>
-                            {
-                                "工作号",
-                                "委托人简称",
-                                "应收折合",
-                                "利润",
-                                "未收折合"
-                            });
+                            cols.Add("工作号", "string");
+                            cols.Add("委托人简称", "string");
+                            cols.Add("应收折合", "decimal");
+                            cols.Add("利润", "decimal");
+                            cols.Add("未收折合", "decimal");
+                            //cols.AddRange(new List<string>
+                            //{
+                            //    "工作号",
+                            //    "委托人简称",
+                            //    "应收折合",
+                            //    "利润",
+                            //    "未收折合"
+                            //});
                         }
                         else
                         {
                             //范例2excel表中包含的列
-                            cols.AddRange(new List<string>
-                            {
-                                "工作号",
-                                "业务员",
-                                "工作单日期",
-                                "收款日期"
-                            });
+                            cols.Add("工作号", "string");
+                            cols.Add("业务员", "string");
+                            cols.Add("工作单日期", "date");
+                            cols.Add("收款日期", "date");
+                            //cols.AddRange(new List<string>
+                            //    {
+                            //        "工作号",
+                            //        "业务员",
+                            //        "工作单日期",
+                            //        "收款日期"
+                            //    });
                         }
                     }
                     else if (cellCount == 31)
@@ -393,13 +403,16 @@ namespace lks.webapi.Utility
                         firstRow = sheet.GetRow(7);
                         rowCount = rowCount - 2;
                         //范例3excel表中包含的列
-                        cols.AddRange(new List<string>
-                            {
-                                "工作号",
-                                "KB"
-                            });
+                        cols.Add("工作号", "string");
+                        cols.Add("KB", "decimal");
+                        //cols.AddRange(new List<string>
+                        //    {
+                        //        "工作号",
+                        //        "KB"
+                        //    });
                     }
                     string newColumnName = string.Empty;
+                    Type type;
                     if (isFirstRowColumn)
                     {
                         for (int i = firstRow.FirstCellNum; i < cellCount; ++i)
@@ -408,10 +421,10 @@ namespace lks.webapi.Utility
                             if (cell != null)
                             {
                                 string cellValue = cell.StringCellValue;
-                                if (cellValue != null && IsColumnMatched(cols, cellValue, out newColumnName))
+                                if (cellValue != null && IsColumnMatched(cols, cellValue, out newColumnName, out type))
                                 {
                                     colIndexes.Add(i);
-                                    DataColumn column = new DataColumn(newColumnName);
+                                    DataColumn column = new DataColumn(newColumnName, type);
                                     data.Columns.Add(column);
                                 }
                             }
@@ -449,8 +462,10 @@ namespace lks.webapi.Utility
                         int j = 0;
                         foreach (int index in colIndexes)
                         {
-                            if (row.GetCell(index) != null) //同理，没有数据的单元格都默认是null
+                            if (row.GetCell(index) != null && !string.IsNullOrWhiteSpace(row.GetCell(index).ToString())) //同理，没有数据的单元格都默认是null
+                            {
                                 dataRow[j++] = row.GetCell(index).ToString();
+                            }
                         }
 
                         data.Rows.Add(dataRow);
@@ -487,14 +502,32 @@ namespace lks.webapi.Utility
             }
         }
 
-        private bool IsColumnMatched(List<string> columns, string columnName, out string newColumnName)
+        private bool IsColumnMatched(Dictionary<string, string> columns, string columnName, out string newColumnName, out Type type)
         {
             newColumnName = string.Empty;
-            foreach (string column in columns)
+            type = typeof(string);
+            foreach (KeyValuePair<string, string> column in columns)
             {
-                if (columnName.StartsWith(column))
+                if (columnName.StartsWith(column.Key))
                 {
-                    newColumnName = column;
+                    newColumnName = column.Key;
+                    switch (column.Value)
+                    {
+                        case "int":
+                            type = typeof(int);
+                            break;
+                        case "string":
+                            type = typeof(string);
+                            break;
+                        case "date":
+                            type = typeof(DateTime);
+                            break;
+                        case "decimal":
+                            type = typeof(decimal);
+                            break;
+                        default:
+                            break;
+                    }
                     return true;
                 }
                 else

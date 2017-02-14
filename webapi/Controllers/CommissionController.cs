@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
+using lks.webapi.ActionFilters;
 using lks.webapi.BLL;
 using lks.webapi.Model;
 
@@ -38,17 +39,21 @@ namespace webapi.Controllers
 
             return response;
         }
-        [HttpPost]
+        [HttpPost, DeflateCompression]
         public dynamic GetCommissions(PagePara para)
         {
             int total = 0;
             return new
             {
-                Commissions = _comService.QueryList(para.Index, para.Size, para.WhereStr, para.OrderField, out total),
+                Commissions = _comService.QueryList(para.Columns, para.Index, para.Size, para.WhereStr, para.OrderField, out total),
                 Total = total
             };
         }
-
+        [Route("DeleteCommission"), HttpPost]
+        public dynamic Delete(IList<Commission> commission)
+        {
+            return _comService.BatchDelete(commission);
+        }
         [HttpGet]
         //[Authorize]
         public FileResponse Test()

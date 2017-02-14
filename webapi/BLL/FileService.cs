@@ -74,7 +74,7 @@ namespace lks.webapi.BLL
 
                             response.Msg = "文件上传成功";
                             response.Code = 200;
-                            response.Data = dt.ToJson();
+                            response.Data = dt.ToJson2();
                             response.Columns = new List<string>();
                             foreach (DataColumn item in dt.Columns)
                             {

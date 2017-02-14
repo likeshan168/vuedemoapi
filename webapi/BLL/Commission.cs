@@ -52,6 +52,11 @@ namespace lks.webapi.BLL
             return dal.Delete(工作号);
         }
 
+        public bool BatchDelete(IEnumerable<Commission> commissions)
+        {
+            return dal.BatchDelete(commissions);
+        }
+
         /// <summary>
         /// 得到一个对象实体
         /// </summary>
@@ -116,16 +121,16 @@ namespace lks.webapi.BLL
         /// <param name="orderField">排序字段</param>
         /// <param name="isDesc">是否降序</param>
         /// <returns>数据列表</returns>
-        public IEnumerable<Commission> QueryList(int index, int size, object wheres, string orderField, out int total, bool isDesc = true)
+        public IEnumerable<Commission> QueryList(IEnumerable<string> columns, int index, int size, string wheres, string orderField, out int total, bool isDesc = true)
         {
-            return dal.QueryList(index, size, wheres, orderField, out total, isDesc);
+            return dal.QueryList(columns, index, size, wheres, orderField, out total, isDesc);
         }
         /// <summary>
         /// 查询单条数据
         /// </summary>
         /// <param name="wheres">查询条件</param>
         /// <returns>单条数据项</returns>
-        public Commission QuerySingle(object wheres)
+        public Commission QuerySingle(string wheres)
         {
             return dal.QuerySingle(wheres);
         }
@@ -134,7 +139,7 @@ namespace lks.webapi.BLL
         /// </summary>
         /// <param name="wheres">查询条件</param>
         /// <returns>总数目</returns>
-        public int QueryCount(object wheres)
+        public int QueryCount(string wheres)
         {
             return dal.QueryCount(wheres);
         }

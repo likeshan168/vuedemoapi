@@ -4,6 +4,7 @@ using System.Data;
 using System.Web;
 using lks.webapi.DAL;
 using lks.webapi.Model;
+using lks.webapi.MyBLL;
 using lks.webapi.Utility;
 
 namespace lks.webapi.BLL
@@ -32,7 +33,7 @@ namespace lks.webapi.BLL
                 if (dal.Exists(userName, password))
                 {
                     //HttpContext.Current.Session["CurrentUser"] = userName;
-                    
+                    MemoryCacher.Add(Constants.CurrentUser, userName, DateTimeOffset.UtcNow.AddHours(1));
                     return new ResponseResult()
                     {
                         Code = 200,
@@ -171,7 +172,7 @@ namespace lks.webapi.BLL
         /// <param name="orderField">排序字段</param>
         /// <param name="isDesc">是否降序</param>
         /// <returns>数据列表</returns>
-        public IEnumerable<UserInfo> QueryList(int index, int size, object wheres, string orderField, out int total, bool isDesc = true)
+        public IEnumerable<UserInfo> QueryList(int index, int size, string wheres, string orderField, out int total, bool isDesc = true)
         {
             return dal.QueryList(index, size, wheres, orderField, out total, isDesc);
         }
@@ -180,7 +181,7 @@ namespace lks.webapi.BLL
         /// </summary>
         /// <param name="wheres">查询条件</param>
         /// <returns>单条数据项</returns>
-        public UserInfo QuerySingle(object wheres)
+        public UserInfo QuerySingle(string wheres)
         {
             return dal.QuerySingle(wheres);
         }
@@ -189,7 +190,7 @@ namespace lks.webapi.BLL
         /// </summary>
         /// <param name="wheres">查询条件</param>
         /// <returns>总数目</returns>
-        public int QueryCount(object wheres)
+        public int QueryCount(string wheres)
         {
             return dal.QueryCount(wheres);
         }

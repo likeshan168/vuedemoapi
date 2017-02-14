@@ -129,7 +129,7 @@ namespace lks.webapi.BLL
         /// <param name="orderField">排序字段</param>
         /// <param name="isDesc">是否降序</param>
         /// <returns>数据列表</returns>
-        public IEnumerable<File> QueryList(int index, int size, object wheres, string orderField, bool isDesc = true)
+        public IEnumerable<File> QueryList(int index, int size, string wheres, string orderField, bool isDesc = true)
         {
             return dal.QueryList(index, size, wheres, orderField, isDesc);
         }
@@ -138,7 +138,7 @@ namespace lks.webapi.BLL
         /// </summary>
         /// <param name="wheres">查询条件</param>
         /// <returns>单条数据项</returns>
-        public File QuerySingle(object wheres)
+        public File QuerySingle(string wheres)
         {
             return dal.QuerySingle(wheres);
         }
@@ -147,7 +147,7 @@ namespace lks.webapi.BLL
         /// </summary>
         /// <param name="wheres">查询条件</param>
         /// <returns>总数目</returns>
-        public int QueryCount(object wheres)
+        public int QueryCount(string wheres)
         {
             return dal.QueryCount(wheres);
         }
