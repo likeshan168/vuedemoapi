@@ -1,6 +1,4 @@
-﻿
-using System;
-
+﻿using System;
 namespace lks.webapi.Model
 {
     //UserInfo
@@ -26,6 +24,10 @@ namespace lks.webapi.Model
         /// PhoneNumber
         /// </summary>		
         public string PhoneNumber { get; set; }
+        /// <summary>
+        /// RoleId
+        /// </summary>		
+        public int RoleId { get; set; }
         /// <summary>
         /// Remark
         /// </summary>		

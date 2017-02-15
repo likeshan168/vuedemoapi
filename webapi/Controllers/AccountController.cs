@@ -18,7 +18,7 @@ namespace webapi.Controllers
         [Route("register"), HttpPost]
         public dynamic Register(UserInfo userInfo)
         {
-            return _bllService.Add(userInfo);
+            return _bllService.AddModel(userInfo);
         }
         [Route("login"), HttpPost]
         public dynamic Login(UserInfo userInfo)
@@ -41,7 +41,7 @@ namespace webapi.Controllers
             int total = 0;
             return new
             {
-                Users = _bllService.QueryList(para.Index, para.Size, para.WhereStr, para.OrderField, out total),
+                Users = _bllService.QueryList(null, para.Index, para.Size, para.WhereStr, para.OrderField, out total),
                 Total = total
             };
         }

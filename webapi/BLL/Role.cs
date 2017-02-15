@@ -6,36 +6,36 @@ using lks.webapi.Model;
 using lks.webapi.Utility;
 namespace lks.webapi.BLL
 {
-    //UserInfo
-    public partial class UserInfoService
+    //Role
+    public partial class RoleService
     {
 
-        private readonly UserInfoDAO dal = new UserInfoDAO();
-        public UserInfoService()
+        private readonly RoleDAO dal = new RoleDAO();
+        public RoleService()
         { }
 
         #region  Method
         /// <summary>
         /// 是否存在该记录
         /// </summary>
-        public bool Exists(Guid Id)
+        public bool Exists(int RoleId)
         {
-            return dal.Exists(Id);
+            return dal.Exists(RoleId);
         }
 
         /// <summary>
         /// 增加一条数据
         /// </summary>
-        public void Add(UserInfo model)
+        public int Add(Role model)
         {
-            dal.Add(model);
+            return dal.Add(model);
 
         }
 
         /// <summary>
         /// 更新一条数据
         /// </summary>
-        public bool Update(UserInfo model)
+        public bool Update(Role model)
         {
             return dal.Update(model);
         }
@@ -43,38 +43,45 @@ namespace lks.webapi.BLL
         /// <summary>
         /// 删除一条数据
         /// </summary>
-        public bool Delete(Guid Id)
+        public bool Delete(int RoleId)
         {
-            return dal.Delete(Id);
+            return dal.Delete(RoleId);
         }
         /// <summary>
         ///  批量删除
         /// </summary>
-        public bool BatchDelete(IEnumerable<UserInfo> commissions)
+        public bool BatchDelete(IEnumerable<Role> commissions)
         {
             return dal.BatchDelete(commissions);
+        }
+        /// <summary>
+        /// 批量删除一批数据
+        /// </summary>
+        public bool DeleteList(string RoleIdlist)
+        {
+            return dal.DeleteList(RoleIdlist);
         }
 
         /// <summary>
         /// 得到一个对象实体
         /// </summary>
-        public UserInfo GetModel(Guid Id)
+        public Role GetModel(int RoleId)
         {
-            return dal.GetModel(Id);
+            return dal.GetModel(RoleId);
         }
 
         /// <summary>
         /// 得到一个对象实体，从缓存中
         /// </summary>
-        public UserInfo GetModelByCache(Guid Id)
+        public Role GetModelByCache(int RoleId)
         {
-            string CacheKey = "UserInfoModel-" + Id;
+            string CacheKey = "RoleModel-" + RoleId;
             object objModel = DataCache.GetCache(CacheKey);
             if (objModel == null)
             {
                 try
                 {
-                    objModel = dal.GetModel(Id);
+                    objModel = dal.GetModel(RoleId);
                     if (objModel != null)
                     {
                         int ModelCache = ConfigHelper.GetConfigInt("ModelCache");
@@ -83,7 +90,7 @@ namespace lks.webapi.BLL
                 }
                 catch { }
             }
-            return (UserInfo)objModel;
+            return (Role)objModel;
         }
 
         /// <summary>
@@ -103,7 +110,7 @@ namespace lks.webapi.BLL
         /// <summary>
         /// 获得数据列表
         /// </summary>
-        public List<UserInfo> QueryList(string strWhere)
+        public List<Role> QueryList(string strWhere)
         {
             DataSet ds = dal.GetList(strWhere);
             return DataTableToList(ds.Tables[0]);
@@ -117,7 +124,7 @@ namespace lks.webapi.BLL
         /// <param name="orderField">排序字段</param>
         /// <param name="isDesc">是否降序</param>
         /// <returns>数据列表</returns>
-        public IEnumerable<UserInfo> QueryList(IEnumerable<string> columns, int index, int size, string wheres, string orderField, out int total, bool isDesc = true)
+        public IEnumerable<Role> QueryList(IEnumerable<string> columns, int index, int size, string wheres, string orderField, out int total, bool isDesc = true)
         {
             return dal.QueryList(columns, index, size, wheres, orderField, out total, isDesc);
         }
@@ -126,7 +133,7 @@ namespace lks.webapi.BLL
         /// </summary>
         /// <param name="wheres">查询条件</param>
         /// <returns>单条数据项</returns>
-        public UserInfo QuerySingle(string wheres)
+        public Role QuerySingle(string wheres)
         {
             return dal.QuerySingle(wheres);
         }
@@ -142,13 +149,13 @@ namespace lks.webapi.BLL
         /// <summary>
         /// 获得数据列表
         /// </summary>
-        public List<UserInfo> DataTableToList(DataTable dt)
+        public List<Role> DataTableToList(DataTable dt)
         {
-            List<UserInfo> modelList = new List<UserInfo>();
+            List<Role> modelList = new List<Role>();
             int rowsCount = dt.Rows.Count;
             if (rowsCount > 0)
             {
-                UserInfo model;
+                Role model;
                 foreach (DataRow row in dt.Rows)
                 {
                     model = dal.GetModel(row);

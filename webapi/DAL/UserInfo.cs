@@ -25,24 +25,6 @@ namespace lks.webapi.DAL
             return SqlHelper.Exists(strSql.ToString(), parameters);
         }
 
-        public bool Exists(string name, string password)
-        {
-            StringBuilder strSql = new StringBuilder();
-            strSql.Append("select count(1) from UserInfo");
-            strSql.Append(" where ");
-            strSql.Append(" name = @Name or email=@name or phoneNumber=@name and password=@Password  ");
-            SqlParameter[] parameters =
-                {
-                    new SqlParameter("@Name", SqlDbType.NVarChar,20),
-                    new SqlParameter("@Password", SqlDbType.NVarChar,20),
-
-                };
-            parameters[0].Value = name;
-            parameters[1].Value = password;
-
-            return SqlHelper.Exists(strSql.ToString(), parameters);
-        }
-
 
 
         /// <summary>
@@ -51,11 +33,11 @@ namespace lks.webapi.DAL
         public void Add(UserInfo model)
         {
             StringBuilder strSql = new StringBuilder();
-            strSql.Append("DECLARE @tempTable TABLE(tempId UNIQUEIDENTIFIER);DECLARE @tempId UNIQUEIDENTIFIER;insert into UserInfo(");
-            strSql.Append("Id,Name,Password,Email,PhoneNumber,Remark");
-            strSql.Append(") OUTPUT  Inserted.Id INTO @tempTable values (");
-            strSql.Append("@Id,@Name,@Password,@Email,@PhoneNumber,@Remark");
-            strSql.Append(");SELECT  @tempId = tempId FROM @tempTable; SELECT @tempId;");
+            strSql.Append("insert into UserInfo(");
+            strSql.Append("Id,Name,Password,Email,PhoneNumber,RoleId,Remark");
+            strSql.Append(") values (");
+            strSql.Append("@Id,@Name,@Password,@Email,@PhoneNumber,@RoleId,@Remark");
+            strSql.Append(") ");
 
             SqlParameter[] parameters = {
                         new SqlParameter("@Id", SqlDbType.UniqueIdentifier,16) ,
@@ -63,6 +45,7 @@ namespace lks.webapi.DAL
                         new SqlParameter("@Password", SqlDbType.NVarChar,20) ,
                         new SqlParameter("@Email", SqlDbType.NVarChar,100) ,
                         new SqlParameter("@PhoneNumber", SqlDbType.NVarChar,20) ,
+                        new SqlParameter("@RoleId", SqlDbType.Int,4) ,
                         new SqlParameter("@Remark", SqlDbType.NVarChar,1000)
 
             };
@@ -72,8 +55,9 @@ namespace lks.webapi.DAL
             parameters[2].Value = model.Password;
             parameters[3].Value = model.Email;
             parameters[4].Value = model.PhoneNumber;
-            parameters[5].Value = model.Remark;
-            model.Id = SqlHelper.ExecuteScalar<Guid>(strSql.ToString(), parameters);
+            parameters[5].Value = model.RoleId;
+            parameters[6].Value = model.Remark;
+            SqlHelper.ExecuteSql(strSql.ToString(), parameters);
 
         }
 
@@ -91,6 +75,7 @@ namespace lks.webapi.DAL
             strSql.Append(" Password = @Password , ");
             strSql.Append(" Email = @Email , ");
             strSql.Append(" PhoneNumber = @PhoneNumber , ");
+            strSql.Append(" RoleId = @RoleId , ");
             strSql.Append(" Remark = @Remark  ");
             strSql.Append(" where Id=@Id  ");
 
@@ -100,6 +85,7 @@ namespace lks.webapi.DAL
                         new SqlParameter("@Password", SqlDbType.NVarChar,20) ,
                         new SqlParameter("@Email", SqlDbType.NVarChar,100) ,
                         new SqlParameter("@PhoneNumber", SqlDbType.NVarChar,20) ,
+                        new SqlParameter("@RoleId", SqlDbType.Int,4) ,
                         new SqlParameter("@Remark", SqlDbType.NVarChar,1000)
 
             };
@@ -109,7 +95,8 @@ namespace lks.webapi.DAL
             parameters[2].Value = model.Password;
             parameters[3].Value = model.Email;
             parameters[4].Value = model.PhoneNumber;
-            parameters[5].Value = model.Remark;
+            parameters[5].Value = model.RoleId;
+            parameters[6].Value = model.Remark;
             int rows = SqlHelper.ExecuteSql(strSql.ToString(), parameters);
             if (rows > 0)
             {
@@ -146,6 +133,31 @@ namespace lks.webapi.DAL
                 return false;
             }
         }
+        /// <summary>
+        ///  批量删除
+        /// </summary>
+        public bool BatchDelete(IEnumerable<UserInfo> commissions)
+        {
+
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append("delete from UserInfo where Id in(");
+            foreach (UserInfo item in commissions)
+            {
+                strSql.Append($"'{item.Id}',");
+            }
+            strSql.Remove(strSql.Length - 1, 0);
+            strSql.Append(')');
+
+            int rows = SqlHelper.ExecuteSql(strSql.ToString());
+            if (rows > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
 
 
@@ -156,20 +168,25 @@ namespace lks.webapi.DAL
         {
 
             StringBuilder strSql = new StringBuilder();
-            strSql.Append("select Id, Name, Password, Email, PhoneNumber, Remark  ");
+            strSql.Append("select Id, Name, Password, Email, PhoneNumber, RoleId, Remark  ");
             strSql.Append("  from UserInfo ");
             strSql.Append(" where Id=@Id ");
             SqlParameter[] parameters = {
                     new SqlParameter("@Id", SqlDbType.UniqueIdentifier,16)          };
             parameters[0].Value = Id;
 
-            return SqlHelper.MapEntity<UserInfo>(SqlHelper.ExecuteReader(strSql.ToString(), parameters));
-        }
 
+            return SqlHelper.MapEntity<UserInfo>(SqlHelper.ExecuteReader(strSql.ToString(), parameters));
+
+        }
+        /// <summary>
+        /// 得到一个对象实体
+        /// </summary>
         public UserInfo GetModel(DataRow row)
         {
             return SqlHelper.MapEntity<UserInfo>(row);
         }
+
 
         /// <summary>
         /// 获得数据列表
@@ -229,9 +246,9 @@ namespace lks.webapi.DAL
         /// <param name="orderField">排序字段</param>
         /// <param name="isDesc">是否降序</param>
         /// <returns>数据列表</returns>
-        public IEnumerable<UserInfo> QueryList(int index, int size, string wheres, string orderField, out int total, bool isDesc = true)
+        public IEnumerable<UserInfo> QueryList(IEnumerable<string> columns, int index, int size, string wheres, string orderField, out int total, bool isDesc = true)
         {
-            string sql = SqlHelper.GenerateQuerySql("UserInfo", null, index, size, wheres, orderField, isDesc);
+            string sql = SqlHelper.GenerateQuerySql("UserInfo", columns, index, size, wheres, orderField, isDesc);
             return SqlHelper.GetList<UserInfo>(sql, null, out total);
         }
         /// <summary>

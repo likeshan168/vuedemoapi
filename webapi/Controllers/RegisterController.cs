@@ -21,7 +21,7 @@ namespace webapi.Controllers
         [Route("register"), HttpPost]
         public dynamic Post(UserInfo userInfo)
         {
-           return  _bllService.Add(userInfo);
+           return  _bllService.AddModel(userInfo);
         }
     }
 }
