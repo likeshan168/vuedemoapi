@@ -13,5 +13,7 @@ namespace lks.webapi.Model
 
         public UserInfo User { get; set; }
         public string AccessToken { get; set; }
+
+        public IEnumerable<Route> Routes { get; set; }
     }
 }

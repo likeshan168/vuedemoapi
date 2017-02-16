@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Web;
+using lks.webapi.Model;
 using lks.webapi.Utility;
 
 namespace lks.webapi.DAL
@@ -27,6 +28,15 @@ namespace lks.webapi.DAL
             parameters[1].Value = password;
 
             return SqlHelper.Exists(strSql.ToString(), parameters);
+        }
+        public IEnumerable<Route> Check(string name, string password)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append("DECLARE @routeId NVARCHAR(100),@sql varchar(1000);");
+            strSql.Append($"SELECT @routeId= r.RouteId FROM dbo.UserInfo u LEFT JOIN dbo.Role r ON r.RoleId = u.RoleId WHERE u.Name='{name}' AND u.Password='{password}';");
+            strSql.Append("SET @sql = 'SELECT * FROM dbo.Route WHERE RouteId IN(' + @routeId +')';");
+            strSql.Append("EXEC (@sql)");
+            return SqlHelper.GetList<Route>(strSql.ToString(), null);
         }
     }
 }

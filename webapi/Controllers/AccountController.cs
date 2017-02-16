@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using lks.webapi.BLL;
 using lks.webapi.Model;
+using lks.webapi.OAuth;
 
 namespace webapi.Controllers
 {
@@ -35,7 +36,7 @@ namespace webapi.Controllers
         {
             return _bllService.Delete(user.Id);
         }
-        [Route("getList"), HttpPost]
+        [Route("getList"), HttpPost, FormAuth]
         public dynamic GetUserList(PagePara para)
         {
             int total = 0;

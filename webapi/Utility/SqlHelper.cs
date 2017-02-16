@@ -66,7 +66,7 @@ namespace lks.webapi.Utility
         {
             object obj = GetSingle(strSql, cmdParms);
             int cmdresult;
-            if ((Object.Equals(obj, null)) || (Object.Equals(obj, System.DBNull.Value)))
+            if ((object.Equals(obj, null)) || (object.Equals(obj, DBNull.Value)))
             {
                 cmdresult = 0;
             }

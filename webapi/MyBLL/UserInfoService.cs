@@ -16,16 +16,23 @@ namespace lks.webapi.BLL
         {
             try
             {
-                if (_dal.Exists(userName, password))
+                var routes = _dal.Check(userName, password);
+                if (routes.Count() != 0)
                 {
-                    //HttpContext.Current.Session["CurrentUser"] = userName;
-                    MemoryCacher.Add(Constants.CurrentUser, userName, DateTimeOffset.UtcNow.AddHours(1));
+                    
+                    //跨域不能用cookie的方式
+                    //Authentication.SetCookie(userName, password, null);
+                    string str = Authentication.GetEncryptStr(userName, password, null);
+                    MemoryCacher.Add(userName, str, DateTimeOffset.UtcNow.AddHours(1));
+                    //session的原理就是利用cookie的
+                    //HttpContext.Current.Session["CurrentUser"] = str;
                     return new ResponseResult()
                     {
                         Code = 200,
                         Msg = "请求成功",
                         User = new UserInfo() { Name = userName, Password = password },
-                        AccessToken = Guid.NewGuid().ToString()
+                        AccessToken = str,
+                        Routes = routes
                     };
                 }
                 else
