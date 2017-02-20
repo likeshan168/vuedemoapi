@@ -126,7 +126,7 @@ namespace lks.webapi.Utility
                         int rows = cmd.ExecuteNonQuery();
                         return rows;
                     }
-                    catch (System.Data.SqlClient.SqlException e)
+                    catch (SqlException e)
                     {
                         connection.Close();
                         throw e;
@@ -366,7 +366,7 @@ namespace lks.webapi.Utility
                     int rows = cmd.ExecuteNonQuery();
                     return rows;
                 }
-                catch (System.Data.SqlClient.SqlException e)
+                catch (SqlException e)
                 {
                     throw e;
                 }
@@ -466,7 +466,7 @@ namespace lks.webapi.Utility
                             return obj;
                         }
                     }
-                    catch (System.Data.SqlClient.SqlException e)
+                    catch (SqlException e)
                     {
                         connection.Close();
                         throw e;
@@ -530,7 +530,7 @@ namespace lks.webapi.Utility
                     command.SelectCommand.CommandTimeout = Times;
                     command.Fill(ds, "ds");
                 }
-                catch (System.Data.SqlClient.SqlException ex)
+                catch (SqlException ex)
                 {
                     throw new Exception(ex.Message);
                 }
@@ -1101,6 +1101,34 @@ namespace lks.webapi.Utility
             }
         }
 
+        public static IEnumerable<T1> GetList<T1>(string sql, SqlParameter[] parameters, out int total, out IDataReader re) where T1 : class, new()
+        {
+            IList<T1> list = new List<T1>();
+            total = 0;
+            re = null;
+            //using (IDataReader reader = ExecuteReader(sql, parameters))
+            //{
+            IDataReader reader = ExecuteReader(sql, parameters);
+            while (reader.Read())
+            {
+                list.Add(MapEntity<T1>(reader));
+            }
+            if (reader.NextResult())
+            {
+                if (reader.Read())
+                {
+                    total = reader.GetInt32(0);
+                }
+            }
+            if (reader.NextResult())
+            {
+                re = reader;
+            }
+
+            return list;
+            //}
+        }
+
         public static T QuerySingle<T>(string sql, SqlParameter[] parameters) where T : class, new()
         {
             using (IDataReader reader = ExecuteReader(sql, parameters))
@@ -1141,20 +1169,20 @@ namespace lks.webapi.Utility
                 throw new ArgumentNullException("orderField");
             }
             string column = columns != null && columns.Any() ? string.Join(",", columns) : "*";
-            return $"select {column} from (select row_number() over(order by [{orderField}] {(isDesc ? "desc" : string.Empty)}) as num, {column} from [{table}] {GetWhere(where)}) as tb1 where tb1.num between {(index - 1) * size + 1} and {index * size};select count(*) from [{table}] {GetWhere(where)};";
+            return $"select {column} from (select row_number() over(order by [{orderField}] {(isDesc ? "desc" : string.Empty)}) as num, {column} from [{table}] {GetWhere(where)}) as tb1 where tb1.num between {(index - 1) * size + 1} and {index * size};select count(*) from {table} {GetWhere(where)};";
         }
 
         private static string GenerateQuerySql(string table, IEnumerable<string> columns, string where, string orderField, bool isDesc)
         {
             //where = string.IsNullOrWhiteSpace(where) ? string.Empty : $"where {where}";
             string column = columns != null && columns.Any() ? string.Join(",", columns) : "*";
-            return $"select {column} from {table} {GetWhere(where)} {(string.IsNullOrWhiteSpace(orderField) ? string.Empty : $"order by {orderField}")} {(isDesc && !string.IsNullOrWhiteSpace(orderField) ? "desc" : string.Empty)};select count(*) from [{table}] {GetWhere(where)};";
+            return $"select {column} from {table} {GetWhere(where)} {(string.IsNullOrWhiteSpace(orderField) ? string.Empty : $"order by {orderField}")} {(isDesc && !string.IsNullOrWhiteSpace(orderField) ? "desc" : string.Empty)};select count(*) from {table} {GetWhere(where)};";
         }
 
         private static string GenerateQuerySql(string table, IEnumerable<string> columns, int size, string where, string orderField, bool isDesc)
         {
             string column = columns != null && columns.Any() ? string.Join(",", columns) : "*";
-            return $"select top {size} {column} from {table} {GetWhere(where)} {(string.IsNullOrWhiteSpace(orderField) ? string.Empty : $"order by {orderField}")} {(isDesc && !string.IsNullOrWhiteSpace(orderField) ? "desc" : string.Empty)};select count(*) from [{table}] {GetWhere(where)};";
+            return $"select top {size} {column} from {table} {GetWhere(where)} {(string.IsNullOrWhiteSpace(orderField) ? string.Empty : $"order by {orderField}")} {(isDesc && !string.IsNullOrWhiteSpace(orderField) ? "desc" : string.Empty)};select count(*) from {table} {GetWhere(where)};";
         }
 
         //public static string GetWhere(object where)
@@ -1174,7 +1202,7 @@ namespace lks.webapi.Utility
 
         public static string GetWhere(string where)
         {
-            if (where == null||string.IsNullOrWhiteSpace(where.ToString()))
+            if (where == null || string.IsNullOrWhiteSpace(where.ToString()))
                 return string.Empty;
 
             string ws = string.Empty;

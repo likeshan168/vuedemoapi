@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using lks.webapi.Model;
+using lks.webapi.MyModel;
 using lks.webapi.Utility;
 
 namespace lks.webapi.DAL
@@ -37,6 +38,13 @@ namespace lks.webapi.DAL
             strSql.Append("SET @sql = 'SELECT * FROM dbo.Route WHERE RouteId IN(' + @routeId +')';");
             strSql.Append("EXEC (@sql)");
             return SqlHelper.GetList<Route>(strSql.ToString(), null);
+        }
+
+        public IEnumerable<UserInfo2> QueryList2(IEnumerable<string> columns, int index, int size, string wheres, string orderField, out int total, bool isDesc = true)
+        {
+            //string column = columns != null && columns.Any() ? string.Join(",", columns) : "u.*,r.RoleName";
+            string sql = SqlHelper.GenerateQuerySql("dbo.UserInfo u LEFT JOIN dbo.Role r ON u.RoleId=r.RoleId", columns, index, size, wheres, orderField, isDesc);
+            return SqlHelper.GetList<UserInfo2>(sql, null, out total);
         }
     }
 }

@@ -74,24 +74,24 @@ namespace lks.webapi.OAuth
                 {
                     queryStr = context.Request.Url.Query;
                 }
-              
+
                 //var rst =  actionContext.Request.Content.ReadAsStreamAsync();
                 //rst.Wait();
 
-                var task = actionContext.Request.Content.ReadAsStreamAsync();
-                var cont = string.Empty;
-                using (Stream sm = task.Result)
-                {
-                    if (sm != null)
-                    {
-                        sm.Seek(0, SeekOrigin.Begin);
-                        int len = (int)sm.Length;
-                        byte[] inputByts = new byte[len];
-                        sm.Read(inputByts, 0, len);
-                        sm.Close();
-                        cont = Encoding.UTF8.GetString(inputByts);
-                    }
-                }
+                //var task = actionContext.Request.Content.ReadAsStreamAsync();
+                //var cont = string.Empty;
+                //using (Stream sm = task.Result)
+                //{
+                //    if (sm != null)
+                //    {
+                //        sm.Seek(0, SeekOrigin.Begin);
+                //        int len = (int)sm.Length;
+                //        byte[] inputByts = new byte[len];
+                //        sm.Read(inputByts, 0, len);
+                //        sm.Close();
+                //        cont = Encoding.UTF8.GetString(inputByts);
+                //    }
+                //}
 
                 //var a = content.Request.QueryString["a"];
                 //var querystr = actionContext.Request.GetQueryNameValuePairs();
@@ -102,7 +102,7 @@ namespace lks.webapi.OAuth
                     return;
                 }
                 string ticket = string.Empty;
-                var queryList = ResolveQuery(queryStr);
+                var queryList = QuerySringHelper.ResolveQuery(queryStr);
                 ticket = queryList["a"];
                 string name = GetUserName(ticket);
 
@@ -116,7 +116,7 @@ namespace lks.webapi.OAuth
                     actionContext.Response.Content = new StringContent("{\"msg\":\"未登录\",\"code\":403}");
                     return;
                 }
-                
+
                 #endregion
             }
             catch (Exception ex)
@@ -142,22 +142,6 @@ namespace lks.webapi.OAuth
                 return string.Empty;
             }
         }
-        private Dictionary<string, string> ResolveQuery(string query)
-        {
-            string q = query.TrimStart('?');
-            string[] qarr = q.Split('&');
-            Dictionary<string, string> queryList = new Dictionary<string, string>();
-            string[] queryItem;
-            foreach (string item in qarr)
-            {
-                queryItem = item.Split('=');
-                if (queryItem.Length != 0 && !string.IsNullOrWhiteSpace(queryItem[0]))
-                {
-                    queryList.Add(queryItem[0], queryItem[1]);
-                }
-            }
 
-            return queryList;
-        }
     }
 }

@@ -172,6 +172,52 @@ namespace lks.webapi.Extension
         }
         #endregion
 
+        public static string ToJson(this IDataReader dataReader)
+        {
+            try
+            {
+                StringBuilder jsonString = new StringBuilder();
+                jsonString.Append("[");
+
+                while (dataReader.Read())
+                {
+                    jsonString.Append("{");
+                    for (int i = 0; i < dataReader.FieldCount; i++)
+                    {
+                        Type type = dataReader.GetFieldType(i);
+                        string strKey = dataReader.GetName(i);
+                        string strValue = dataReader[i].ToString();
+                        jsonString.Append("\"" + strKey + "\":");
+                        strValue = StringFormat(strValue, type);
+                        if (i < dataReader.FieldCount - 1)
+                        {
+                            jsonString.Append(strValue + ",");
+                        }
+                        else
+                        {
+                            jsonString.Append(strValue);
+                        }
+                    }
+                    jsonString.Append("},");
+                }
+                if (!dataReader.IsClosed)
+                {
+                    dataReader.Close();
+                }
+                jsonString.Remove(jsonString.Length - 1, 1);
+                jsonString.Append("]");
+                if (jsonString.Length == 1)
+                {
+                    return "[]";
+                }
+                return jsonString.ToString();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         #region 转换为string字符串类型
         /// <summary>
         ///  转换为string字符串类型
@@ -222,6 +268,82 @@ namespace lks.webapi.Extension
             long lLeft = 621355968000000000;
             long Sticks = (dt.Ticks - lLeft) / 10000;
             return Sticks;
+        }
+
+        /// <summary>  
+        /// 格式化字符型、日期型、布尔型  
+        /// </summary>  
+        /// <param name="str"></param>  
+        /// <param name="type"></param>  
+        /// <returns></returns>  
+        private static string StringFormat(string str, Type type)
+        {
+            if (type != typeof(string) && string.IsNullOrEmpty(str))
+            {
+                str = "\"" + str + "\"";
+            }
+            else if (type == typeof(string))
+            {
+                str = String2Json(str);
+                str = "\"" + str + "\"";
+            }
+            else if (type == typeof(DateTime))
+            {
+                str = "\"" + str + "\"";
+            }
+            else if (type == typeof(bool))
+            {
+                str = str.ToLower();
+            }
+            else if (type == typeof(byte[]))
+            {
+                str = "\"" + str + "\"";
+            }
+            else if (type == typeof(Guid))
+            {
+                str = "\"" + str + "\"";
+            }
+            return str;
+        }
+
+        /// <summary>  
+        /// 过滤特殊字符  
+        /// </summary>  
+        /// <param name="s"></param>  
+        /// <returns></returns>  
+        public static string String2Json(string s)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < s.Length; i++)
+            {
+                char c = s.ToCharArray()[i];
+                switch (c)
+                {
+                    case '\"':
+                        sb.Append("\\\""); break;
+                    case '\\':
+                        sb.Append("\\\\"); break;
+                    case '/':
+                        sb.Append("\\/"); break;
+                    case '\b':
+                        sb.Append("\\b"); break;
+                    case '\f':
+                        sb.Append("\\f"); break;
+                    case '\n':
+                        sb.Append("\\n"); break;
+                    case '\r':
+                        sb.Append("\\r"); break;
+                    case '\t':
+                        sb.Append("\\t"); break;
+                    case '\v':
+                        sb.Append("\\v"); break;
+                    case '\0':
+                        sb.Append("\\0"); break;
+                    default:
+                        sb.Append(c); break;
+                }
+            }
+            return sb.ToString();
         }
     }
 }

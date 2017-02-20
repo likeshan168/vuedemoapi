@@ -22,7 +22,8 @@ namespace lks.webapi.Utility
             _jilOptions = new Options
                 (
                     dateFormat: DateTimeFormat.MillisecondsSinceUnixEpoch,
-                    //includeInherited: true,
+                    //当类中存在继承的时候，需要序列化父类中的属性时，该值要设置为true
+                    includeInherited: true,
                     serializationNameFormat: SerializationNameFormat.CamelCase,
                     unspecifiedDateTimeKindBehavior:UnspecifiedDateTimeKindBehavior.IsUTC
                 );

@@ -17,6 +17,8 @@ namespace lks.webapi.Utility
         public static bool Add(string key, object value, DateTimeOffset absExpiration)
         {
             MemoryCache memoryCache = MemoryCache.Default;
+            //先删除，否则，如果存在的化，就不会覆盖了
+            Delete(key);
             return memoryCache.Add(key, value, absExpiration);
         }
 

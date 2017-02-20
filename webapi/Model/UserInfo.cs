@@ -4,6 +4,7 @@ namespace lks.webapi.Model
     //UserInfo
     public class UserInfo
     {
+        //public UserInfo() { }
         /// <summary>
         /// Id
         /// </summary>		
