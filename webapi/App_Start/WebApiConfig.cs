@@ -1,7 +1,6 @@
 ﻿using System.Web.Http;
 using System.Web.Http.Cors;
 using lks.webapi.Utility;
-using Newtonsoft.Json.Serialization;
 
 namespace webapi
 {
@@ -25,7 +24,7 @@ namespace webapi
             // Web API routes
             config.MapHttpAttributeRoutes();
             //只有这样配置的跨域访问才有效果
-            //config.EnableCors(new EnableCorsAttribute("*", "*", "*"));
+            config.EnableCors(new EnableCorsAttribute("*", "*", "*"));
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",

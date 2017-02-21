@@ -71,6 +71,16 @@ namespace lks.webapi.BLL
                 IEnumerable<UserInfo> users;
                 if (route == null)
                 {
+                    string[] user = name.Split('_');
+                    if (string.IsNullOrWhiteSpace(whereStr))
+                    {
+                        whereStr = $"Name='{user[0]}' and Password = '{user[1]}' ";
+                    }
+                    else
+                    {
+                        whereStr = whereStr +  $" and Name='{user[0]}' and Password = '{user[1]}' ";
+
+                    }
                     users = dal.QueryList2(columns, index, 1, whereStr, orderField, out total);
                 }
                 else
