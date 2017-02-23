@@ -404,7 +404,7 @@ namespace lks.webapi.Utility
                         rowCount = rowCount - 2;
                         //范例3excel表中包含的列
                         cols.Add("工作号", "string");
-                        cols.Add("KB", "decimal");
+                        cols.Add("kb", "decimal");
                         //cols.AddRange(new List<string>
                         //    {
                         //        "工作号",
@@ -432,7 +432,7 @@ namespace lks.webapi.Utility
                         //针对范例3excel表中的列，其中导出的excel列有点问题
                         if (cellCount == 31)
                         {
-                            DataColumn column = new DataColumn("KB");
+                            DataColumn column = new DataColumn("kb",typeof(decimal));
                             data.Columns.Add(column);
                             colIndexes.Add(19);
                             startRow = firstRow.RowNum + 2;
