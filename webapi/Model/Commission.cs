@@ -57,6 +57,10 @@ namespace lks.webapi.Model
         /// KB
         /// </summary>		
         public decimal KB { get; set; }
+        /// <summary>
+        /// 表示是否已经计提
+        /// </summary>
+        public string 是否已经计提 { get; set; }
 
     }
 }

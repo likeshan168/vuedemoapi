@@ -43,11 +43,10 @@ namespace webapi.Controllers
         public dynamic GetCommissions(PagePara para)
         {
             int total = 0;
-            return new
-            {
-                Commissions = _comService.QueryList(para.Columns, para.Index, para.Size, para.WhereStr, para.OrderField, out total),
-                Total = total
-            };
+            if (para.Other)
+                return _comService.QueryList3(para.Columns, para.Index, para.Size, para.WhereStr, para.OrderField, out total);
+            else
+                return _comService.QueryList2(para.Columns, para.Index, para.Size, para.WhereStr, para.OrderField, out total);
         }
         [Route("DeleteCommission"), HttpPost]
         public dynamic Delete(IList<Commission> commission)
