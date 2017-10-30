@@ -89,8 +89,8 @@ namespace lks.webapi.DAL
                 //导入范例2
                 else if (columnCount == 4)
                 {
-                    strSql.AppendFormat($"update Commission set 业务员 = '{item.业务员}', 工作单日期='{item.工作单日期}',收款日期='{item.收款日期}' where 工作号='{item.工作号}'; END;");
-                    strSql.AppendFormat($"else insert Commission(工作号,业务员,工作单日期,收款日期) values('{item.工作号}','{item.业务员}','{item.工作单日期}','{item.收款日期}');");
+                    strSql.AppendFormat($"update Commission set 业务员 = '{item.业务员}', 工作单日期='{item.工作单日期.ToString("yyyy-MM-dd HH:mm:ss")}',收款日期='{item.收款日期.ToString("yyyy-MM-dd HH:mm:ss")}' where 工作号='{item.工作号}'; END;");
+                    strSql.AppendFormat($"else insert Commission(工作号,业务员,工作单日期,收款日期) values('{item.工作号}','{item.业务员}','{item.工作单日期.ToString("yyyy-MM-dd HH:mm:ss")}','{item.收款日期.ToString("yyyy-MM-dd HH:mm:ss")}');");
                 }
                 //导入范例3
                 else if (columnCount == 2)
@@ -101,8 +101,8 @@ namespace lks.webapi.DAL
                 //这是默认更新的操作
                 else if (columnCount == 0)
                 {
-                    strSql.AppendFormat($"update Commission set 业务员 = '{item.业务员}',委托人简称 = '{item.委托人简称}',利润={item.利润},应收折合={item.应收折合},未收折合={item.未收折合}, 收款日期='{item.收款日期}',超期日期='{item.超期日期}',月数={item.月数},超期回款资金成本={item.超期回款资金成本},金额 = {item.金额},工作单日期 = '{item.工作单日期}',KB = {item.KB},是否已经计提 ='已计提' where 工作号='{item.工作号}'; END;");
-                    strSql.AppendFormat($"else insert Commission(工作号 ,业务员 ,委托人简称 ,利润 ,应收折合 ,未收折合 ,收款日期 ,超期日期 ,月数 ,超期回款资金成本 ,金额 ,工作单日期 ,KB) values('{item.工作号}','{item.业务员}','{item.委托人简称}',{item.利润},{item.应收折合},{item.未收折合},'{item.收款日期}','{item.超期日期}',{item.月数},{item.超期回款资金成本},{item.金额},'{item.工作单日期}',{item.KB});");
+                    strSql.AppendFormat($"update Commission set 业务员 = '{item.业务员}',委托人简称 = '{item.委托人简称}',利润={item.利润},应收折合={item.应收折合},未收折合={item.未收折合}, 收款日期='{item.收款日期.ToString("yyyy-MM-dd HH:mm:ss")}',超期日期='{item.超期日期.ToString("yyyy-MM-dd HH:mm:ss")}',月数={item.月数},超期回款资金成本={item.超期回款资金成本},金额 = {item.金额},工作单日期 = '{item.工作单日期.ToString("yyyy-MM-dd HH:mm:ss")}',KB = {item.KB},是否已经计提 ='已计提' where 工作号='{item.工作号}'; END;");
+                    strSql.AppendFormat($"else insert Commission(工作号 ,业务员 ,委托人简称 ,利润 ,应收折合 ,未收折合 ,收款日期 ,超期日期 ,月数 ,超期回款资金成本 ,金额 ,工作单日期 ,KB) values('{item.工作号}','{item.业务员}','{item.委托人简称}',{item.利润},{item.应收折合},{item.未收折合},'{item.收款日期.ToString("yyyy-MM-dd HH:mm:ss")}','{item.超期日期.ToString("yyyy-MM-dd HH:mm:ss")}',{item.月数},{item.超期回款资金成本},{item.金额},'{item.工作单日期}',{item.KB});");
                 }
                 if (!string.IsNullOrWhiteSpace(item.委托人简称))
                     strSql.Append($"SELECT * FROM MonthConfig WHERE 委托人简称='{item.委托人简称}' IF @@ROWCOUNT = 0 INSERT MonthConfig(委托人简称,月数) VALUES ('{item.委托人简称}',{item.月数});");

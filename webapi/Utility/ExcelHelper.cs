@@ -397,6 +397,14 @@ namespace lks.webapi.Utility
                             //    });
                         }
                     }
+                    else if (cellCount == 30)
+                    {
+                        // 范例2excel表中包含的列 这个又是导入一种不同列数的表，我都疯了
+                        cols.Add("工作号", "string");
+                        cols.Add("业务员", "string");
+                        cols.Add("工作单日期", "date");
+                        cols.Add("收款日期", "date");
+                    }
                     else if (cellCount == 31)
                     {
                         //去除前面7行和后面2行
