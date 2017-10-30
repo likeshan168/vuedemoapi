@@ -356,7 +356,7 @@ namespace lks.webapi.Utility
                         firstRow = sheet.GetRow(7);
                         rowCount = rowCount - 5;
                     }
-                    else if (cellCount == 28)
+                    else if (cellCount == 28 || cellCount == 27)
                     {
                         //去除前面一行
                         firstRow = sheet.GetRow(1);
@@ -432,7 +432,7 @@ namespace lks.webapi.Utility
                         //针对范例3excel表中的列，其中导出的excel列有点问题
                         if (cellCount == 31)
                         {
-                            DataColumn column = new DataColumn("kb",typeof(decimal));
+                            DataColumn column = new DataColumn("kb", typeof(decimal));
                             data.Columns.Add(column);
                             colIndexes.Add(19);
                             startRow = firstRow.RowNum + 2;

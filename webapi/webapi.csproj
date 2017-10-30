@@ -183,6 +183,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
+    <None Include="README.md" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
