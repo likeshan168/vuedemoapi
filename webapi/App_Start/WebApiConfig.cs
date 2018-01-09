@@ -24,7 +24,7 @@ namespace webapi
             // Web API routes
             config.MapHttpAttributeRoutes();
             //只有这样配置的跨域访问才有效果
-            config.EnableCors(new EnableCorsAttribute("*", "*", "*"));
+            config.EnableCors(new EnableCorsAttribute("http://101.201.28.235:84,http://localhost:8080", "*", "*"));
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",

@@ -73,7 +73,11 @@ namespace lks.webapi.DAL
 
         }
 
-
+        /// <summary>
+        /// 导入数据，注意：已经进行计提操作的不能进行更新的操作
+        /// </summary>
+        /// <param name="models"></param>
+        /// <param name="columnCount"></param>
         public void AddAndUpdate(IList<Commission> models, int columnCount)
         {
             StringBuilder strSql = new StringBuilder();

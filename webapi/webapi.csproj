@@ -184,7 +184,7 @@
   <ItemGroup>
     <Content Include="Global.asax" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
-    <None Include="Properties\PublishProfiles\webdeploy.pubxml" />
+    <None Include="Properties\PublishProfiles\jitiapi.pubxml" />
     <None Include="README.md" />
     <Content Include="Web.config" />
   </ItemGroup>
